@@ -146,34 +146,89 @@ async def analyze_repository(request: AnalyzeRequest):
         
         print(f"✅ Repository mapped: {repo_map['file_count']} files found")
         
-        # Step 2: Analyze code (placeholder for now)
+        # Step 2: Analyze code
         print("🔍 Analyzing code structure...")
         analyzer = CodeAnalyzer()
-        # TODO: Fetch actual file contents and analyze
-        analysis_results = {
-            'success': True,
-            'files_analyzed': 0,
-            'results': []
-        }
+        
+        # Get list of Python files to analyze (your analyzer only handles .py files)
+        code_files = [f for f in repo_map.get('files', []) 
+                     if f.endswith('.py')]
+        
+        # Limit to first 50 files for performance
+        files_to_analyze = code_files[:50]
+        
+        print(f"📊 Found {len(code_files)} Python files, analyzing first {len(files_to_analyze)}...")
+        
+        # Fetch and analyze files from GitHub
+        owner = repo_map.get('owner')
+        repo_name = repo_map.get('repo')
+        
+        # Collect file contents
+        files_content = {}
+        
+        for file_path in files_to_analyze:
+            try:
+                # Fetch file content from GitHub
+                file_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/main/{file_path}"
+                import requests as req
+                file_response = req.get(file_url, timeout=10)
+                
+                if file_response.status_code == 200:
+                    files_content[file_path] = file_response.text
+                else:
+                    # Try 'master' branch if 'main' fails
+                    file_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/master/{file_path}"
+                    file_response = req.get(file_url, timeout=10)
+                    if file_response.status_code == 200:
+                        files_content[file_path] = file_response.text
+                        
+            except Exception as e:
+                print(f"⚠️ Failed to fetch {file_path}: {str(e)}")
+                continue
+        
+        print(f"✅ Fetched {len(files_content)} files successfully")
+        
+        # Analyze all files at once using your analyze_repository method
+        analysis_results = analyzer.analyze_repository(files_content)
+        
+        print(f"✅ Analyzed {analysis_results.get('files_analyzed', 0)} files")
         
         # Step 3: Generate documentation
         print("📝 Generating documentation...")
         docgen = DocGenerator()
         
-        # Prepare repo_map for docgen
+        # Prepare repo_map in the format your DocGenerator expects
         repo_name = repo_map.get('repo', 'repository')
-        doc_map = {
+        
+        # Organize files by directory for file_tree
+        file_tree = {}
+        for file_path in repo_map.get('files', [])[:200]:
+            parts = file_path.split('/')
+            if len(parts) > 1:
+                dir_name = '/'.join(parts[:-1])
+                if dir_name not in file_tree:
+                    file_tree[dir_name] = []
+                file_tree[dir_name].append(parts[-1])
+            else:
+                if 'root' not in file_tree:
+                    file_tree['root'] = []
+                file_tree['root'].append(file_path)
+        
+        # Build file_tree list
+        file_tree_list = [
+            {'path': dir_path, 'files': files}
+            for dir_path, files in list(file_tree.items())[:40]
+        ]
+        
+        # Prepare map_res for your DocGenerator
+        map_res = {
             'name': repo_name,
-            'readme_summary': f"Repository: {repo_map.get('owner')}/{repo_name}",
-            'file_tree': [
-                {
-                    'path': 'root',
-                    'files': repo_map.get('files', [])[:100]  # Limit for performance
-                }
-            ]
+            'readme_summary': f"Repository: {repo_map.get('owner')}/{repo_name}\n\nTotal Files: {repo_map.get('file_count', 0)}\nTotal Directories: {repo_map.get('directory_count', 0)}\n\nAnalyzed {analysis_results.get('files_analyzed', 0)} Python files.",
+            'file_tree': file_tree_list
         }
         
-        doc_result = docgen.generate(analysis_results, doc_map, opts={'out_dir': './outputs'})
+        # Use your generate method which builds CCG internally
+        doc_result = docgen.generate(analysis_results, map_res, opts={'out_dir': './outputs'})
         
         # Verify files were actually created and construct proper paths
         docs_path = doc_result.get('docs')
