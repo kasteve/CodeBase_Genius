@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>linguist - Technical Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.7;
+            color: #24292e;
+            background: #f6f8fa;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
+            color: white;
+            padding: 4rem 2rem 3rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+        
+        .nav {
+            background: white;
+            padding: 1.25rem 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #e1e4e8;
+        }
+        
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2.5rem;
+        }
+        
+        .nav a {
+            color: #2b5876;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            padding-bottom: 4px;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .nav a:hover {
+            color: #4e4376;
+            border-bottom-color: #4e4376;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid #e1e4e8;
+        }
+        
+        .section-title {
+            font-size: 2.25rem;
+            color: #24292e;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #2b5876;
+            font-weight: 700;
+        }
+        
+        .subsection-title {
+            font-size: 1.75rem;
+            color: #24292e;
+            margin: 2rem 0 1rem;
+            font-weight: 600;
+        }
+        
+        .markdown-content p {
+            margin-bottom: 1.25rem;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+        
+        .markdown-content strong {
+            color: #2b5876;
+            font-weight: 600;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.75rem;
+            margin: 2.5rem 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+        
+        .file-card {
+            background: #fafbfc;
+            border-left: 5px solid #2b5876;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+        
+        .file-card h3 {
+            color: #2b5876;
+            font-size: 1.4rem;
+            margin-bottom: 1.25rem;
+            font-family: 'Courier New', Consolas, monospace;
+            font-weight: 600;
+        }
+        
+        .file-description {
+            color: #24292e;
+            margin-bottom: 1.25rem;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        
+        .purpose-box {
+            background: #e8f4f8;
+            padding: 1rem 1.25rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            border-left: 4px solid #2b5876;
+        }
+        
+        .purpose-box strong {
+            color: #2b5876;
+        }
+        
+        .technical-details {
+            background: #f1f8ff;
+            padding: 1rem 1.25rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #444;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: #dfe9f3;
+            color: #2b5876;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-right: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .function-list, .class-list {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            border: 1px solid #e1e4e8;
+        }
+        
+        .function-list h4, .class-list h4 {
+            margin-bottom: 1rem;
+            color: #24292e;
+            font-size: 1.15rem;
+        }
+        
+        .function-item, .class-item {
+            padding: 0.9rem;
+            border-bottom: 1px solid #f0f0f0;
+            font-family: 'Courier New', Consolas, monospace;
+            color: #24292e;
+            font-size: 0.95rem;
+        }
+        
+        .function-item:last-child, .class-item:last-child {
+            border-bottom: none;
+        }
+        
+        .code-icon {
+            color: #2b5876;
+            margin-right: 0.75rem;
+            font-weight: bold;
+        }
+        
+        .line-number {
+            color: #999;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+        
+        .key-features {
+            background: #fff8e1;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        
+        .key-features h4 {
+            margin-bottom: 1rem;
+            color: #24292e;
+        }
+        
+        .key-features ul {
+            margin-left: 1.75rem;
+        }
+        
+        .key-features li {
+            margin-bottom: 0.75rem;
+            color: #24292e;
+            line-height: 1.6;
+        }
+        
+        .diagram-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 2.5rem 0;
+            border: 1px solid #e1e4e8;
+        }
+        
+        .diagram-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        
+        .footer {
+            background: #24292e;
+            color: white;
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 5rem;
+        }
+        
+        .footer p {
+            margin: 0.5rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="header">
+        <div class="header-content">
+            <h1>📚 {repo_name}</h1>
+            <p class="subtitle">Comprehensive AI-Generated Technical Documentation</p>
+        </div>
+    </div>
+    
+    <div class="nav">
+        <div class="nav-content">
+            <a href="#overview">Overview</a>
+            <a href="#statistics">Statistics</a>
+            <a href="#files">Code Files</a>
+            <a href="#diagram">Architecture</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Overview Section -->
+        <div class="card" id="overview">
+            <h2 class="section-title">📋 Project Overview</h2>
+            <div class="markdown-content">
+                {overview_html}
+            </div>
+        </div>
+        
+        <!-- Statistics Section -->
+        <div class="card" id="statistics">
+            <h2 class="section-title">📊 Repository Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">{stats['total_files']}</span>
+                    <span class="stat-label">Files Analyzed</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">{stats['total_functions']}</span>
+                    <span class="stat-label">Functions</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">{stats['total_classes']}</span>
+                    <span class="stat-label">Classes</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">{stats['total_relationships']}</span>
+                    <span class="stat-label">Code Relationships</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Files Section -->
+        <div class="card" id="files">
+            <h2 class="section-title">📁 Code Files & Components</h2>
+            <p style="margin-bottom: 2rem; color: #586069;">Detailed analysis of each file with AI-generated documentation</p>
+        
+            <div class="file-card">
+                <h3>📄 {filepath}</h3>
+                
+                <div class="file-description">
+                    {file_docs.get('description', '')}
+                </div>
+                
+                <div class="purpose-box">
+                    <strong>Purpose:</strong> {file_docs.get('purpose', '')}
+                </div>
+                
+                {f'''<div class="technical-details">
+                    <strong>Technical Details:</strong> {file_docs.get('technical_details', '')}
+                </div>''' if file_docs.get('technical_details') else ''}
+                
+                {f'''<div class="key-features">
+                    <h4>🔑 Key Features</h4>
+                    <ul>
+                        {"".join(f"<li>{feature}</li>" for feature in file_docs.get('key_features', []))}
+                    </ul>
+                </div>''' if file_docs.get('key_features') else ''}
+                
+                <div style="margin-top: 1.5rem;">
+                    <span class="badge">🔧 {len(functions)} Function{'' if len(functions) == 1 else 's'}</span>
+                    <span class="badge">📦 {len(classes)} Class{'es' if len(classes) != 1 else ''}</span>
+                </div>
+                
+                {f'''<div class="class-list">
+                    <h4>Classes</h4>
+                    {"".join(f'<div class="class-item"><span class="code-icon">📦</span>{c.get("name")} <span class="line-number">(line {c.get("line", "?")})</span></div>' for c in classes[:15])}
+                </div>''' if classes else ''}
+                
+                {f'''<div class="function-list">
+                    <h4>Functions</h4>
+                    {"".join(f'<div class="function-item"><span class="code-icon">⚡</span>{f.get("name")}() <span class="line-number">(line {f.get("line", "?")})</span></div>' for f in functions[:20])}
+                </div>''' if functions else ''}
+            </div>
+            
+            <div class="file-card">
+                <h3>📄 {filepath}</h3>
+                
+                <div class="file-description">
+                    {file_docs.get('description', '')}
+                </div>
+                
+                <div class="purpose-box">
+                    <strong>Purpose:</strong> {file_docs.get('purpose', '')}
+                </div>
+                
+                {f'''<div class="technical-details">
+                    <strong>Technical Details:</strong> {file_docs.get('technical_details', '')}
+                </div>''' if file_docs.get('technical_details') else ''}
+                
+                {f'''<div class="key-features">
+                    <h4>🔑 Key Features</h4>
+                    <ul>
+                        {"".join(f"<li>{feature}</li>" for feature in file_docs.get('key_features', []))}
+                    </ul>
+                </div>''' if file_docs.get('key_features') else ''}
+                
+                <div style="margin-top: 1.5rem;">
+                    <span class="badge">🔧 {len(functions)} Function{'' if len(functions) == 1 else 's'}</span>
+                    <span class="badge">📦 {len(classes)} Class{'es' if len(classes) != 1 else ''}</span>
+                </div>
+                
+                {f'''<div class="class-list">
+                    <h4>Classes</h4>
+                    {"".join(f'<div class="class-item"><span class="code-icon">📦</span>{c.get("name")} <span class="line-number">(line {c.get("line", "?")})</span></div>' for c in classes[:15])}
+                </div>''' if classes else ''}
+                
+                {f'''<div class="function-list">
+                    <h4>Functions</h4>
+                    {"".join(f'<div class="function-item"><span class="code-icon">⚡</span>{f.get("name")}() <span class="line-number">(line {f.get("line", "?")})</span></div>' for f in functions[:20])}
+                </div>''' if functions else ''}
+            </div>
+            
+            <div class="file-card">
+                <h3>📄 {filepath}</h3>
+                
+                <div class="file-description">
+                    {file_docs.get('description', '')}
+                </div>
+                
+                <div class="purpose-box">
+                    <strong>Purpose:</strong> {file_docs.get('purpose', '')}
+                </div>
+                
+                {f'''<div class="technical-details">
+                    <strong>Technical Details:</strong> {file_docs.get('technical_details', '')}
+                </div>''' if file_docs.get('technical_details') else ''}
+                
+                {f'''<div class="key-features">
+                    <h4>🔑 Key Features</h4>
+                    <ul>
+                        {"".join(f"<li>{feature}</li>" for feature in file_docs.get('key_features', []))}
+                    </ul>
+                </div>''' if file_docs.get('key_features') else ''}
+                
+                <div style="margin-top: 1.5rem;">
+                    <span class="badge">🔧 {len(functions)} Function{'' if len(functions) == 1 else 's'}</span>
+                    <span class="badge">📦 {len(classes)} Class{'es' if len(classes) != 1 else ''}</span>
+                </div>
+                
+                {f'''<div class="class-list">
+                    <h4>Classes</h4>
+                    {"".join(f'<div class="class-item"><span class="code-icon">📦</span>{c.get("name")} <span class="line-number">(line {c.get("line", "?")})</span></div>' for c in classes[:15])}
+                </div>''' if classes else ''}
+                
+                {f'''<div class="function-list">
+                    <h4>Functions</h4>
+                    {"".join(f'<div class="function-item"><span class="code-icon">⚡</span>{f.get("name")}() <span class="line-number">(line {f.get("line", "?")})</span></div>' for f in functions[:20])}
+                </div>''' if functions else ''}
+            </div>
+            
+            <div class="file-card">
+                <h3>📄 {filepath}</h3>
+                
+                <div class="file-description">
+                    {file_docs.get('description', '')}
+                </div>
+                
+                <div class="purpose-box">
+                    <strong>Purpose:</strong> {file_docs.get('purpose', '')}
+                </div>
+                
+                {f'''<div class="technical-details">
+                    <strong>Technical Details:</strong> {file_docs.get('technical_details', '')}
+                </div>''' if file_docs.get('technical_details') else ''}
+                
+                {f'''<div class="key-features">
+                    <h4>🔑 Key Features</h4>
+                    <ul>
+                        {"".join(f"<li>{feature}</li>" for feature in file_docs.get('key_features', []))}
+                    </ul>
+                </div>''' if file_docs.get('key_features') else ''}
+                
+                <div style="margin-top: 1.5rem;">
+                    <span class="badge">🔧 {len(functions)} Function{'' if len(functions) == 1 else 's'}</span>
+                    <span class="badge">📦 {len(classes)} Class{'es' if len(classes) != 1 else ''}</span>
+                </div>
+                
+                {f'''<div class="class-list">
+                    <h4>Classes</h4>
+                    {"".join(f'<div class="class-item"><span class="code-icon">📦</span>{c.get("name")} <span class="line-number">(line {c.get("line", "?")})</span></div>' for c in classes[:15])}
+                </div>''' if classes else ''}
+                
+                {f'''<div class="function-list">
+                    <h4>Functions</h4>
+                    {"".join(f'<div class="function-item"><span class="code-icon">⚡</span>{f.get("name")}() <span class="line-number">(line {f.get("line", "?")})</span></div>' for f in functions[:20])}
+                </div>''' if functions else ''}
+            </div>
+            
+            <div class="file-card">
+                <h3>📄 {filepath}</h3>
+                
+                <div class="file-description">
+                    {file_docs.get('description', '')}
+                </div>
+                
+                <div class="purpose-box">
+                    <strong>Purpose:</strong> {file_docs.get('purpose', '')}
+                </div>
+                
+                {f'''<div class="technical-details">
+                    <strong>Technical Details:</strong> {file_docs.get('technical_details', '')}
+                </div>''' if file_docs.get('technical_details') else ''}
+                
+                {f'''<div class="key-features">
+                    <h4>🔑 Key Features</h4>
+                    <ul>
+                        {"".join(f"<li>{feature}</li>" for feature in file_docs.get('key_features', []))}
+                    </ul>
+                </div>''' if file_docs.get('key_features') else ''}
+                
+                <div style="margin-top: 1.5rem;">
+                    <span class="badge">🔧 {len(functions)} Function{'' if len(functions) == 1 else 's'}</span>
+                    <span class="badge">📦 {len(classes)} Class{'es' if len(classes) != 1 else ''}</span>
+                </div>
+                
+                {f'''<div class="class-list">
+                    <h4>Classes</h4>
+                    {"".join(f'<div class="class-item"><span class="code-icon">📦</span>{c.get("name")} <span class="line-number">(line {c.get("line", "?")})</span></div>' for c in classes[:15])}
+                </div>''' if classes else ''}
+                
+                {f'''<div class="function-list">
+                    <h4>Functions</h4>
+                    {"".join(f'<div class="function-item"><span class="code-icon">⚡</span>{f.get("name")}() <span class="line-number">(line {f.get("line", "?")})</span></div>' for f in functions[:20])}
+                </div>''' if functions else ''}
+            </div>
+            </div></div>
+    
+    <div class="footer">
+        <p><strong>📚 Generated by CodeBase Genius</strong></p>
+        <p style="opacity: 0.85; margin-top: 0.75rem;">Powered by AI • Generated on November 14, 2025 at 06:23:40</p>
+    </div>
+    
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -27,6 +27,14 @@ else:
     else:
         print("⚠️ Warning: Graphviz not found. Diagram generation may fail.")
 
+# Load Gemini API key from environment
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
+if GEMINI_API_KEY:
+    print("✅ Gemini API key loaded - AI documentation enhancement enabled")
+else:
+    print("⚠️ No Gemini API key found - AI enhancement will be disabled")
+    print("   Set GEMINI_API_KEY environment variable to enable AI features")
+
 app = FastAPI(
     title="CodeBase Genius API",
     description="AI-powered codebase documentation generator",
@@ -129,7 +137,17 @@ async def analyze_repository(request: AnalyzeRequest):
         # Use Jac to analyze via Python integration
         from py.repo_mapper import RepoMapper
         from py.code_analyzer import CodeAnalyzer
-        from py.docgen import DocGenerator
+        # Import HTML doc generator with AI
+        try:
+            from py.docgen_html import HTMLDocGenerator as DocGenerator
+            print("✅ Using AI-powered HTML documentation generator")
+        except ImportError:
+            try:
+                from py.docgen_ai import AIDocGenerator as DocGenerator
+                print("✅ Using AI-enhanced markdown generator")
+            except ImportError:
+                from py.docgen import DocGenerator
+                print("⚠️ Using basic documentation generator")
         
         # Step 1: Map repository
         print(f"📂 Mapping repository: {request.repo_url}")

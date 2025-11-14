@@ -156,24 +156,57 @@ if page == "Generate Documentation":
                         doc_file = Path(doc_path)
                         
                         if doc_file.exists():
-                            # Read and display markdown
-                            try:
+                            # Check if it's HTML or Markdown
+                            is_html = doc_file.suffix == '.html' or doc_file.name == 'index.html'
+                            
+                            if is_html:
+                                # Beautiful HTML documentation!
+                                st.success("✨ Beautiful HTML documentation generated!")
+                                
+                                col1, col2 = st.columns(2)
+                                with col1:
+                                    # Button to open in browser
+                                    if st.button("🌐 Open in Browser", type="primary"):
+                                        import webbrowser
+                                        webbrowser.open(f'file://{doc_file.absolute()}')
+                                        st.info("📖 Documentation opened in your default browser!")
+                                
+                                with col2:
+                                    # Download HTML
+                                    with open(doc_file, 'r', encoding='utf-8') as f:
+                                        html_content = f.read()
+                                    st.download_button(
+                                        label="⬇️ Download HTML",
+                                        data=html_content,
+                                        file_name=f"{repo_url.split('/')[-1]}_docs.html",
+                                        mime="text/html"
+                                    )
+                                
+                                # Show preview in iframe
+                                st.markdown("### 👀 Preview")
                                 with open(doc_file, 'r', encoding='utf-8') as f:
-                                    markdown_content = f.read()
+                                    html_content = f.read()
+                                st.components.v1.html(html_content, height=600, scrolling=True)
                                 
-                                # Download button
-                                st.download_button(
-                                    label="⬇️ Download Documentation",
-                                    data=markdown_content,
-                                    file_name=f"{repo_url.split('/')[-1]}_docs.md",
-                                    mime="text/markdown"
-                                )
-                                
-                                # Display markdown
-                                with st.expander("📖 View Documentation", expanded=True):
-                                    st.markdown(markdown_content)
-                            except Exception as e:
-                                st.error(f"Error reading documentation file: {str(e)}")
+                            else:
+                                # Markdown fallback
+                                try:
+                                    with open(doc_file, 'r', encoding='utf-8') as f:
+                                        markdown_content = f.read()
+                                    
+                                    # Download button
+                                    st.download_button(
+                                        label="⬇️ Download Documentation",
+                                        data=markdown_content,
+                                        file_name=f"{repo_url.split('/')[-1]}_docs.md",
+                                        mime="text/markdown"
+                                    )
+                                    
+                                    # Display markdown
+                                    with st.expander("📖 View Documentation", expanded=True):
+                                        st.markdown(markdown_content)
+                                except Exception as e:
+                                    st.error(f"Error reading documentation file: {str(e)}")
                         else:
                             st.error(f"❌ Documentation file not found at: {doc_file}")
                             st.info("The file may have been generated but the path is incorrect. Check the debug info above.")
