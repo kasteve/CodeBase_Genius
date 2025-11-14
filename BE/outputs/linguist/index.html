@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>linguist - Technical Documentation</title>
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
             line-height: 1.7;
             color: #24292e;
             background: #f6f8fa;
@@ -34,13 +31,11 @@
             font-size: 3rem;
             margin-bottom: 0.75rem;
             font-weight: 700;
-            letter-spacing: -0.5px;
         }
         
         .header .subtitle {
             font-size: 1.2rem;
             opacity: 0.95;
-            font-weight: 300;
         }
         
         .nav {
@@ -50,7 +45,6 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid #e1e4e8;
         }
         
         .nav-content {
@@ -98,13 +92,6 @@
             font-weight: 700;
         }
         
-        .subsection-title {
-            font-size: 1.75rem;
-            color: #24292e;
-            margin: 2rem 0 1rem;
-            font-weight: 600;
-        }
-        
         .markdown-content p {
             margin-bottom: 1.25rem;
             font-size: 1.05rem;
@@ -147,7 +134,55 @@
         .stat-label {
             font-size: 1rem;
             opacity: 0.95;
-            font-weight: 500;
+        }
+        
+        .category-card {
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .language-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .language-item {
+            padding: 1.5rem;
+            background: #f6f8fa;
+            border-radius: 8px;
+            border-left: 4px solid #2b5876;
+        }
+        
+        .language-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        
+        .language-name {
+            font-weight: 600;
+            color: #24292e;
+            font-size: 1.1rem;
+        }
+        
+        .language-count {
+            color: #586069;
+        }
+        
+        .language-bar {
+            height: 8px;
+            background: #e1e4e8;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .language-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2b5876 0%, #4e4376 100%);
+            transition: width 0.5s ease;
         }
         
         .file-card {
@@ -163,36 +198,14 @@
             color: #2b5876;
             font-size: 1.4rem;
             margin-bottom: 1.25rem;
-            font-family: 'Courier New', Consolas, monospace;
-            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
         }
         
         .file-description {
             color: #24292e;
             margin-bottom: 1.25rem;
             font-size: 1.05rem;
-            line-height: 1.7;
-        }
-        
-        .purpose-box {
-            background: #e8f4f8;
-            padding: 1rem 1.25rem;
-            border-radius: 6px;
-            margin: 1rem 0;
-            border-left: 4px solid #2b5876;
-        }
-        
-        .purpose-box strong {
-            color: #2b5876;
-        }
-        
-        .technical-details {
-            background: #f1f8ff;
-            padding: 1rem 1.25rem;
-            border-radius: 6px;
-            margin: 1rem 0;
-            font-style: italic;
-            color: #444;
         }
         
         .badge {
@@ -218,14 +231,12 @@
         .function-list h4, .class-list h4 {
             margin-bottom: 1rem;
             color: #24292e;
-            font-size: 1.15rem;
         }
         
         .function-item, .class-item {
             padding: 0.9rem;
             border-bottom: 1px solid #f0f0f0;
-            font-family: 'Courier New', Consolas, monospace;
-            color: #24292e;
+            font-family: 'Courier New', monospace;
             font-size: 0.95rem;
         }
         
@@ -236,51 +247,12 @@
         .code-icon {
             color: #2b5876;
             margin-right: 0.75rem;
-            font-weight: bold;
         }
         
         .line-number {
             color: #999;
             font-size: 0.85rem;
             font-style: italic;
-        }
-        
-        .key-features {
-            background: #fff8e1;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin: 1.5rem 0;
-        }
-        
-        .key-features h4 {
-            margin-bottom: 1rem;
-            color: #24292e;
-        }
-        
-        .key-features ul {
-            margin-left: 1.75rem;
-        }
-        
-        .key-features li {
-            margin-bottom: 0.75rem;
-            color: #24292e;
-            line-height: 1.6;
-        }
-        
-        .diagram-container {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 12px;
-            text-align: center;
-            margin: 2.5rem 0;
-            border: 1px solid #e1e4e8;
-        }
-        
-        .diagram-container img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
         }
         
         .footer {
@@ -291,32 +263,20 @@
             margin-top: 5rem;
         }
         
-        .footer p {
-            margin: 0.5rem 0;
-        }
-        
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .nav-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
+            .header h1 { font-size: 2rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .nav-content { flex-direction: column; gap: 1rem; }
         }
     </style>
+
 </head>
 <body>
-    
     <div class="header">
         <div class="header-content">
-            <h1>📚 {repo_name}</h1>
+            <h1>📚 linguist</h1>
             <p class="subtitle">Comprehensive AI-Generated Technical Documentation</p>
+            <p style="margin-top: 0.5rem; font-size: 0.95rem; opacity: 0.85;">Repository: <a href="https://github.com/octocat/linguist" target="_blank" style="color: white; opacity: 0.9; text-decoration: underline;">https://github.com/octocat/linguist</a></p>
         </div>
     </div>
     
@@ -324,8 +284,8 @@
         <div class="nav-content">
             <a href="#overview">Overview</a>
             <a href="#statistics">Statistics</a>
-            <a href="#files">Code Files</a>
-            <a href="#diagram">Architecture</a>
+            <a href="#files">Files</a>
+            <a href="#languages">Languages</a>
         </div>
     </div>
     
@@ -334,232 +294,2268 @@
         <div class="card" id="overview">
             <h2 class="section-title">📋 Project Overview</h2>
             <div class="markdown-content">
-                {overview_html}
+                
+        <p>The <strong>linguist</strong> repository contains a total of <strong>2,037</strong> files 
+        organized across <strong>401</strong> directories. This comprehensive codebase demonstrates 
+        a well-structured project with multiple file types and technologies.</p>
+        
+        <p>Our analysis examined <strong>129</strong> files across various categories: 
+        <strong>82</strong> code files, 
+        <strong>5</strong> documentation/markup files, 
+        <strong>11</strong> configuration files, and 
+        <strong>0</strong> stylesheet files.</p>
+        
+        <p>The codebase contains <strong>377</strong> functions and 
+        <strong>41</strong> classes across multiple programming languages, 
+        indicating a robust and feature-rich implementation.</p>
+        
             </div>
         </div>
         
         <!-- Statistics Section -->
         <div class="card" id="statistics">
             <h2 class="section-title">📊 Repository Statistics</h2>
+            <p style="margin-bottom: 2rem; color: #586069;">
+                Complete analysis of <strong>2,037</strong> files across 
+                <strong>401</strong> directories.
+            </p>
             <div class="stats-grid">
                 <div class="stat-card">
-                    <span class="stat-number">{stats['total_files']}</span>
+                    <span class="stat-number">129</span>
                     <span class="stat-label">Files Analyzed</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">{stats['total_functions']}</span>
+                    <span class="stat-number">82</span>
+                    <span class="stat-label">Code Files</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">377</span>
                     <span class="stat-label">Functions</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">{stats['total_classes']}</span>
-                    <span class="stat-label">Classes</span>
+                    <span class="stat-number">41</span>
+                    <span class="stat-label">Classes/Types</span>
                 </div>
-                <div class="stat-card">
-                    <span class="stat-number">{stats['total_relationships']}</span>
-                    <span class="stat-label">Code Relationships</span>
+            </div>
+            
+            <div style="margin-top: 2.5rem;">
+                <h3 style="font-size: 1.3rem; margin-bottom: 1.5rem; color: #24292e;">File Categories</h3>
+                <div class="stats-grid">
+                    <div class="category-card" style="background: #e8f5e9;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💻</div>
+                        <div style="font-size: 1.5rem; font-weight: bold;">82</div>
+                        <div>Code Files</div>
+                    </div>
+                    <div class="category-card" style="background: #e3f2fd;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
+                        <div style="font-size: 1.5rem; font-weight: bold;">5</div>
+                        <div>Markup/Docs</div>
+                    </div>
+                    <div class="category-card" style="background: #fff3e0;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚙️</div>
+                        <div style="font-size: 1.5rem; font-weight: bold;">11</div>
+                        <div>Configuration</div>
+                    </div>
+                    <div class="category-card" style="background: #f3e5f5;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎨</div>
+                        <div style="font-size: 1.5rem; font-weight: bold;">0</div>
+                        <div>Stylesheets</div>
+                    </div>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Languages Section -->
+        <div class="card" id="languages">
+            <h2 class="section-title">💻 Programming Languages</h2>
+            <div class="language-list">
+
+                <div class="language-item">
+                    <div class="language-info">
+                        <span class="language-name">Cpp</span>
+                        <span class="language-count">63 files (76.8%)</span>
+                    </div>
+                    <div class="language-bar">
+                        <div class="language-bar-fill" style="width: 76.82926829268293%"></div>
+                    </div>
+                </div>
+
+                <div class="language-item">
+                    <div class="language-info">
+                        <span class="language-name">Ruby</span>
+                        <span class="language-count">18 files (22.0%)</span>
+                    </div>
+                    <div class="language-bar">
+                        <div class="language-bar-fill" style="width: 21.951219512195124%"></div>
+                    </div>
+                </div>
+
+                <div class="language-item">
+                    <div class="language-info">
+                        <span class="language-name">Php</span>
+                        <span class="language-count">1 files (1.2%)</span>
+                    </div>
+                    <div class="language-bar">
+                        <div class="language-bar-fill" style="width: 1.2195121951219512%"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
         
         <!-- Files Section -->
         <div class="card" id="files">
-            <h2 class="section-title">📁 Code Files & Components</h2>
-            <p style="margin-bottom: 2rem; color: #586069;">Detailed analysis of each file with AI-generated documentation</p>
-        
-            <div class="file-card">
-                <h3>📄 {filepath}</h3>
-                
-                <div class="file-description">
-                    {file_docs.get('description', '')}
-                </div>
-                
-                <div class="purpose-box">
-                    <strong>Purpose:</strong> {file_docs.get('purpose', '')}
-                </div>
-                
-                {f'''<div class="technical-details">
-                    <strong>Technical Details:</strong> {file_docs.get('technical_details', '')}
-                </div>''' if file_docs.get('technical_details') else ''}
-                
-                {f'''<div class="key-features">
-                    <h4>🔑 Key Features</h4>
-                    <ul>
-                        {"".join(f"<li>{feature}</li>" for feature in file_docs.get('key_features', []))}
-                    </ul>
-                </div>''' if file_docs.get('key_features') else ''}
-                
-                <div style="margin-top: 1.5rem;">
-                    <span class="badge">🔧 {len(functions)} Function{'' if len(functions) == 1 else 's'}</span>
-                    <span class="badge">📦 {len(classes)} Class{'es' if len(classes) != 1 else ''}</span>
-                </div>
-                
-                {f'''<div class="class-list">
-                    <h4>Classes</h4>
-                    {"".join(f'<div class="class-item"><span class="code-icon">📦</span>{c.get("name")} <span class="line-number">(line {c.get("line", "?")})</span></div>' for c in classes[:15])}
-                </div>''' if classes else ''}
-                
-                {f'''<div class="function-list">
-                    <h4>Functions</h4>
-                    {"".join(f'<div class="function-item"><span class="code-icon">⚡</span>{f.get("name")}() <span class="line-number">(line {f.get("line", "?")})</span></div>' for f in functions[:20])}
-                </div>''' if functions else ''}
+            <h2 class="section-title">📁 Analyzed Files</h2>
+            <p style="margin-bottom: 2rem; color: #586069;">
+                Detailed breakdown of all analyzed files in the repository
+            </p>
+<div class="file-card">
+<h3>📄 lib/linguist.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 2 functions with 100 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 100 lines</span>
+<span class="badge">🔧 2 Functions</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>detect() 
+<span class="line-number">(line 18)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>instrument() 
+<span class="line-number">(line 91)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/blob.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 6 functions and 1 class with 74 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 74 lines</span>
+<span class="badge">🔧 6 Functions</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Blob 
+<span class="line-number">(line 7)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>initialize() 
+<span class="line-number">(line 16)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>name() 
+<span class="line-number">(line 34)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>data() 
+<span class="line-number">(line 41)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>size() 
+<span class="line-number">(line 48)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>extension() 
+<span class="line-number">(line 55)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>extensions() 
+<span class="line-number">(line 65)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/blob_helper.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 30 functions with 347 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 347 lines</span>
+<span class="badge">🔧 30 Functions</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>extname() 
+<span class="line-number">(line 25)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>_mime_type() 
+<span class="line-number">(line 32)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>mime_type() 
+<span class="line-number">(line 53)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>binary_mime_type() 
+<span class="line-number">(line 60)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>likely_binary() 
+<span class="line-number">(line 69)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>content_type() 
+<span class="line-number">(line 83)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>disposition() 
+<span class="line-number">(line 96)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>encoding() 
+<span class="line-number">(line 106)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>ruby_encoding() 
+<span class="line-number">(line 112)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>detect_encoding() 
+<span class="line-number">(line 123)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>binary() 
+<span class="line-number">(line 130)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>empty() 
+<span class="line-number">(line 152)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>text() 
+<span class="line-number">(line 159)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>image() 
+<span class="line-number">(line 166)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>solid() 
+<span class="line-number">(line 173)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>csv() 
+<span class="line-number">(line 180)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>pdf() 
+<span class="line-number">(line 187)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>large() 
+<span class="line-number">(line 196)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>safe_to_colorize() 
+<span class="line-number">(line 203)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>high_ratio_of_long_lines() 
+<span class="line-number">(line 210)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>viewable() 
+<span class="line-number">(line 220)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>vendored() 
+<span class="line-number">(line 235)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>documentation() 
+<span class="line-number">(line 250)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>lines() 
+<span class="line-number">(line 259)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>loc() 
+<span class="line-number">(line 297)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>sloc() 
+<span class="line-number">(line 306)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated() 
+<span class="line-number">(line 318)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>language() 
+<span class="line-number">(line 327)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>tm_scope() 
+<span class="line-number">(line 332)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>include_in_language_stats() 
+<span class="line-number">(line 339)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/classifier.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 11 functions and 1 class with 191 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 191 lines</span>
+<span class="badge">🔧 11 Functions</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Classifier 
+<span class="line-number">(line 5)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 18)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 39)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 76)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>initialize() 
+<span class="line-number">(line 82)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>classify() 
+<span class="line-number">(line 97)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>tokens_probability() 
+<span class="line-number">(line 118)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>token_probability() 
+<span class="line-number">(line 130)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>language_probability() 
+<span class="line-number">(line 143)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>verbosity() 
+<span class="line-number">(line 148)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>debug_dump_probabilities() 
+<span class="line-number">(line 152)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>debug_dump_all_tokens() 
+<span class="line-number">(line 167)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/file_blob.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 4 functions and 1 class with 44 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 44 lines</span>
+<span class="badge">🔧 4 Functions</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>FileBlob 
+<span class="line-number">(line 8)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>initialize() 
+<span class="line-number">(line 17)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>mode() 
+<span class="line-number">(line 25)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>data() 
+<span class="line-number">(line 32)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>size() 
+<span class="line-number">(line 39)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/generated.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 31 functions and 1 class with 431 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 431 lines</span>
+<span class="badge">🔧 31 Functions</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Generated 
+<span class="line-number">(line 2)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 11)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>initialize() 
+<span class="line-number">(line 19)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>data() 
+<span class="line-number">(line 32)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>lines() 
+<span class="line-number">(line 39)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated() 
+<span class="line-number">(line 53)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>xcode_file() 
+<span class="line-number">(line 88)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>minified_files() 
+<span class="line-number">(line 100)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>has_source_map() 
+<span class="line-number">(line 119)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>source_map() 
+<span class="line-number">(line 130)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>compiled_coffeescript() 
+<span class="line-number">(line 145)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_net_docfile() 
+<span class="line-number">(line 185)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_net_designer_file() 
+<span class="line-number">(line 202)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_net_specflow_feature_file() 
+<span class="line-number">(line 213)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_parser() 
+<span class="line-number">(line 222)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_postscript() 
+<span class="line-number">(line 240)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_go() 
+<span class="line-number">(line 257)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_protocol_buffer() 
+<span class="line-number">(line 270)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_apache_thrift() 
+<span class="line-number">(line 282)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_jni_header() 
+<span class="line-number">(line 292)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>node_modules() 
+<span class="line-number">(line 303)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>npm_shrinkwrap() 
+<span class="line-number">(line 310)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>godeps() 
+<span class="line-number">(line 318)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>composer_lock() 
+<span class="line-number">(line 325)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_by_zephir() 
+<span class="line-number">(line 332)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>vcr_cassette() 
+<span class="line-number">(line 339)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>compiled_cython_file() 
+<span class="line-number">(line 353)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_module() 
+<span class="line-number">(line 370)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_unity3d_meta() 
+<span class="line-number">(line 384)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_racc() 
+<span class="line-number">(line 397)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated_jflex() 
+<span class="line-number">(line 410)</span>
+</div>
+<div class="function-item" style="font-style: italic;">... and 1 more</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/grammars.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 1 function with 11 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 11 lines</span>
+<span class="badge">🔧 1 Function</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 6)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/heuristics.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 5 functions and 1 class with 450 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 450 lines</span>
+<span class="badge">🔧 5 Functions</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Heuristics 
+<span class="line-number">(line 3)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 16)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 44)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>initialize() 
+<span class="line-number">(line 52)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>matches() 
+<span class="line-number">(line 58)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>call() 
+<span class="line-number">(line 64)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/language.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 27 functions and 1 class with 557 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 557 lines</span>
+<span class="badge">🔧 27 Functions</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Language 
+<span class="line-number">(line 22)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 40)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 49)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 96)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 104)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 118)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 133)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 148)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 172)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 178)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 192)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 210)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 223)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 235)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 242)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 252)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>initialize() 
+<span class="line-number">(line 260)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>primary_extension() 
+<span class="line-number">(line 414)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>escaped_name() 
+<span class="line-number">(line 427)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>default_alias_name() 
+<span class="line-number">(line 434)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>group() 
+<span class="line-number">(line 441)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>popular() 
+<span class="line-number">(line 448)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>unpopular() 
+<span class="line-number">(line 455)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>searchable() 
+<span class="line-number">(line 465)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>to_s() 
+<span class="line-number">(line 470)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>eql() 
+<span class="line-number">(line 478)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>hash() 
+<span class="line-number">(line 482)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>inspect() 
+<span class="line-number">(line 486)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/lazy_blob.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 11 functions and 1 class with 99 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 99 lines</span>
+<span class="badge">🔧 11 Functions</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>LazyBlob 
+<span class="line-number">(line 6)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>initialize() 
+<span class="line-number">(line 26)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>git_attributes() 
+<span class="line-number">(line 34)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>documentation() 
+<span class="line-number">(line 39)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>generated() 
+<span class="line-number">(line 47)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>vendored() 
+<span class="line-number">(line 55)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>language() 
+<span class="line-number">(line 63)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>data() 
+<span class="line-number">(line 73)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>size() 
+<span class="line-number">(line 78)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>cleanup() 
+<span class="line-number">(line 83)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>boolean_attribute() 
+<span class="line-number">(line 90)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>load_blob() 
+<span class="line-number">(line 94)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/md5.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 1 function with 39 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 39 lines</span>
+<span class="badge">🔧 1 Function</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 12)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/repository.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 11 functions and 1 class with 176 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 176 lines</span>
+<span class="badge">🔧 11 Functions</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Repository 
+<span class="line-number">(line 10)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 15)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>initialize() 
+<span class="line-number">(line 29)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>load_existing_stats() 
+<span class="line-number">(line 51)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>languages() 
+<span class="line-number">(line 65)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>language() 
+<span class="line-number">(line 78)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>size() 
+<span class="line-number">(line 88)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>breakdown_by_file() 
+<span class="line-number">(line 95)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>cache() 
+<span class="line-number">(line 111)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>read_index() 
+<span class="line-number">(line 121)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>current_tree() 
+<span class="line-number">(line 127)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>compute_stats() 
+<span class="line-number">(line 134)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/samples.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 3 functions with 112 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 112 lines</span>
+<span class="badge">🔧 3 Functions</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 21)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 33)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 71)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/shebang.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 2 functions and 1 class with 60 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 60 lines</span>
+<span class="badge">🔧 2 Functions</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Shebang 
+<span class="line-number">(line 2)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 13)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 20)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/strategy/filename.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 1 function and 1 class with 11 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 11 lines</span>
+<span class="badge">🔧 1 Function</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Filename 
+<span class="line-number">(line 4)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 5)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/strategy/modeline.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 2 functions and 1 class with 48 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 48 lines</span>
+<span class="badge">🔧 2 Functions</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Modeline 
+<span class="line-number">(line 3)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 32)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 41)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/tokenizer.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file containing 4 functions and 1 class with 206 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 206 lines</span>
+<span class="badge">🔧 4 Functions</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Tokenizer 
+<span class="line-number">(line 9)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>self() 
+<span class="line-number">(line 15)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>extract_tokens() 
+<span class="line-number">(line 60)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>extract_shebang() 
+<span class="line-number">(line 139)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>extract_sgml_tokens() 
+<span class="line-number">(line 166)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 lib/linguist/version.rb</h3>
+<div class="file-description">A <strong>ruby</strong> source file with 4 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Ruby</span>
+<span class="badge">📏 4 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/Blade/hello.blade.php</h3>
+<div class="file-description">A <strong>php</strong> source file with 22 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Php</span>
+<span class="badge">📏 22 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/16F88.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 1 class with 87 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 87 lines</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>PIC16F88 
+<span class="line-number">(line 58)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/CsvStreamer.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 1 class with 43 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 43 lines</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>CsvStreamer 
+<span class="line-number">(line 13)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/Entity.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 1 class with 98 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 98 lines</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Entity 
+<span class="line-number">(line 20)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/Field.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 33 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 33 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/Memory16F88.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 1 class with 33 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 33 lines</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Memory16F88 
+<span class="line-number">(line 21)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/PackageInfoParser.cpp</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 57 functions with 1,179 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 1,179 lines</span>
+<span class="badge">🔧 57 Functions</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 49)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>for() 
+<span class="line-number">(line 67)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 96)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 121)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 146)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 161)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>switch() 
+<span class="line-number">(line 166)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 180)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 188)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 195)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 203)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>for() 
+<span class="line-number">(line 214)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 216)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 218)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 223)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 226)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>switch() 
+<span class="line-number">(line 240)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 259)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 311)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>for() 
+<span class="line-number">(line 312)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>for() 
+<span class="line-number">(line 321)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 350)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 354)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 363)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 371)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 401)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 436)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 458)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 460)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 492)</span>
+</div>
+<div class="function-item" style="font-style: italic;">... and 27 more</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/ThreadedQueue.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 1 class with 77 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 77 lines</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>ThreadedQueue 
+<span class="line-number">(line 26)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/Types.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 33 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 33 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/bar.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 1 class with 11 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 11 lines</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Bar 
+<span class="line-number">(line 1)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/crypter.cpp</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 124 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 124 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/env.cpp</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 1 function with 82 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 82 lines</span>
+<span class="badge">🔧 1 Function</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 62)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/env.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 1 class with 53 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 53 lines</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Env 
+<span class="line-number">(line 36)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/gdsdbreader.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 1 class with 70 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 70 lines</span>
+<span class="badge">📦 1 Class</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>dbDataStructure 
+<span class="line-number">(line 16)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/graphics.cpp</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 2 functions with 109 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 109 lines</span>
+<span class="badge">🔧 2 Functions</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>translateCoords() 
+<span class="line-number">(line 62)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 103)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/hello.cpp</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 9 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 9 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/json_reader.cpp</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 921 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 921 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/json_writer.cpp</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 3 functions with 858 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 858 lines</span>
+<span class="badge">🔧 3 Functions</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>while() 
+<span class="line-number">(line 104)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>while() 
+<span class="line-number">(line 108)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>switch() 
+<span class="line-number">(line 109)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/key.cpp</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 1 function with 383 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 383 lines</span>
+<span class="badge">🔧 1 Function</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 113)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/key.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 5 functions and 5 classes with 163 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 163 lines</span>
+<span class="badge">🔧 5 Functions</span>
+<span class="badge">📦 5 Classes</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>key_error 
+<span class="line-number">(line 41)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>CKeyID 
+<span class="line-number">(line 48)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>CScriptID 
+<span class="line-number">(line 56)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>CPubKey 
+<span class="line-number">(line 64)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>CKey 
+<span class="line-number">(line 109)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>CPubKey() 
+<span class="line-number">(line 70)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>GetID() 
+<span class="line-number">(line 80)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>GetHash() 
+<span class="line-number">(line 84)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>IsValid() 
+<span class="line-number">(line 88)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>IsCompressed() 
+<span class="line-number">(line 92)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/libcanister.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 5 classes with 138 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 138 lines</span>
+<span class="badge">📦 5 Classes</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>canmem 
+<span class="line-number">(line 25)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>caninfo 
+<span class="line-number">(line 43)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>canister 
+<span class="line-number">(line 52)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>canfile 
+<span class="line-number">(line 56)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>canister 
+<span class="line-number">(line 75)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/main.cpp</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 75 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 75 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/metrics.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 2 functions with 93 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 93 lines</span>
+<span class="badge">🔧 2 Functions</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>Elapsed() 
+<span class="line-number">(line 72)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>Restart() 
+<span class="line-number">(line 76)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/protocol-buffer.pb.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 9 functions and 2 classes with 219 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 219 lines</span>
+<span class="badge">🔧 9 Functions</span>
+<span class="badge">📦 2 Classes</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Person 
+<span class="line-number">(line 36)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>Person 
+<span class="line-number">(line 40)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>GetCachedSize() 
+<span class="line-number">(line 81)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 143)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 153)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 160)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 167)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 174)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 181)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 190)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 193)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/render_adapter.cpp</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 7 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 7 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/rpc.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 27 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 27 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/scanner.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 38 functions and 5 classes with 577 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 577 lines</span>
+<span class="badge">🔧 38 Functions</span>
+<span class="badge">📦 5 Classes</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Utf16CharacterStream 
+<span class="line-number">(line 80)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>UnicodeCache 
+<span class="line-number">(line 143)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>LiteralBuffer 
+<span class="line-number">(line 173)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>Scanner 
+<span class="line-number">(line 277)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>LiteralScope 
+<span class="line-number">(line 281)</span>
+</div>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 113)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>UnicodeCache() 
+<span class="line-number">(line 147)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>IsIdentifierStart() 
+<span class="line-number">(line 154)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>IsIdentifierPart() 
+<span class="line-number">(line 155)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>IsLineTerminator() 
+<span class="line-number">(line 156)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>IsWhiteSpace() 
+<span class="line-number">(line 157)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 185)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 186)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>is_ascii() 
+<span class="line-number">(line 198)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>length() 
+<span class="line-number">(line 215)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>Reset() 
+<span class="line-number">(line 219)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>ExpandBuffer() 
+<span class="line-number">(line 235)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>ConvertToUtf16() 
+<span class="line-number">(line 242)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>for() 
+<span class="line-number">(line 255)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>Complete() 
+<span class="line-number">(line 290)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>IsValid() 
+<span class="line-number">(line 305)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>current_token() 
+<span class="line-number">(line 327)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>location() 
+<span class="line-number">(line 330)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>is_literal_ascii() 
+<span class="line-number">(line 345)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>literal_length() 
+<span class="line-number">(line 349)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>literal_contains_escapes() 
+<span class="line-number">(line 354)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 357)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>peek() 
+<span class="line-number">(line 367)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>peek_location() 
+<span class="line-number">(line 369)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>is_next_literal_ascii() 
+<span class="line-number">(line 381)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>next_literal_length() 
+<span class="line-number">(line 385)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>octal_position() 
+<span class="line-number">(line 398)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>clear_octal_position() 
+<span class="line-number">(line 399)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>HarmonyScoping() 
+<span class="line-number">(line 407)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>SetHarmonyScoping() 
+<span class="line-number">(line 410)</span>
+</div>
+<div class="function-item" style="font-style: italic;">... and 8 more</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/srs_app_ingest.cpp</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 3 functions with 558 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 558 lines</span>
+<span class="badge">🔧 3 Functions</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 186)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 208)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 316)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/utils.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 2 classes with 72 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 72 lines</span>
+<span class="badge">📦 2 Classes</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>QTemporaryFile 
+<span class="line-number">(line 41)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>Utils 
+<span class="line-number">(line 47)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/v8.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 2 classes with 153 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 153 lines</span>
+<span class="badge">📦 2 Classes</span>
+</div>
+<div class="class-list">
+<h4>Classes/Types</h4>
+<div class="class-item">
+<span class="code-icon">📦</span>Deserializer 
+<span class="line-number">(line 73)</span>
+</div>
+<div class="class-item">
+<span class="code-icon">📦</span>V8 
+<span class="line-number">(line 75)</span>
+</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C++/wrapper_inner.cpp</h3>
+<div class="file-description">A <strong>cpp</strong> source file containing 104 functions with 4,675 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 4,675 lines</span>
+<span class="badge">🔧 104 Functions</span>
+</div>
+<div class="function-list">
+<h4>Functions/Methods</h4>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1146)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1179)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1196)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1222)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1239)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1285)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>for() 
+<span class="line-number">(line 1313)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1439)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1445)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1486)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1505)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1510)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1520)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1530)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1556)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1569)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1582)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1595)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1608)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1621)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1634)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1647)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1660)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1673)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1686)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1699)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1712)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1725)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1738)</span>
+</div>
+<div class="function-item">
+<span class="code-icon">⚡</span>if() 
+<span class="line-number">(line 1751)</span>
+</div>
+<div class="function-item" style="font-style: italic;">... and 74 more</div>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/2D.C</h3>
+<div class="file-description">A .c file with 146 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 146 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/2D.H</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 30 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 30 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/ArrowLeft.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 94 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 94 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/GLKMatrix4.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 904 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 904 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/NWMan.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 100 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 100 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/Nightmare.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 28 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 28 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/array.c</h3>
+<div class="file-description">A .c file with 46 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 46 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/array.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 59 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 59 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/bitmap.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 48 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 48 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/blob.c</h3>
+<div class="file-description">A .c file with 26 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 26 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/blob.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 26 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 26 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/bootstrap.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 103 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 103 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/color.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 45 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 45 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/commit.c</h3>
+<div class="file-description">A .c file with 1,229 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 1,229 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/commit.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 227 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 227 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/custom_extensions.c</h3>
+<div class="file-description">A .c file with 257 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 257 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/driver.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 53 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 53 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/elf.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 71 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 71 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/exception.zep.c</h3>
+<div class="file-description">A .c file with 29 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 29 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/exception.zep.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 5 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 5 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/filter.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 46 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 46 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/fudge_node.c</h3>
+<div class="file-description">A .c file with 189 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 189 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/git.c</h3>
+<div class="file-description">A .c file with 610 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 610 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/hello.c</h3>
+<div class="file-description">A .c file with 8 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 8 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/hello.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 7 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 7 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/http_parser.c</h3>
+<div class="file-description">A .c file with 2,060 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 2,060 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/http_parser.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 319 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 319 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/info.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 45 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 45 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/interface.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 48 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 48 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/ip4.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 51 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 51 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/jni_layer.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 62 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 62 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/main.c</h3>
+<div class="file-description">A .c file with 398 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 398 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/markdown.c</h3>
+<div class="file-description">A .c file with 2,552 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 2,552 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/multiboot.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 111 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 111 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/ntru_encrypt.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 90 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 90 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/portio.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 44 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 44 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/pqiv.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 167 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 167 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/process.c</h3>
+<div class="file-description">A .c file with 463 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 463 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/rdiscount.c</h3>
+<div class="file-description">A .c file with 130 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 130 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/redis.c</h3>
+<div class="file-description">A .c file with 2,539 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 2,539 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/rf_io.c</h3>
+<div class="file-description">A .c file with 1,268 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 1,268 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/rf_io.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 683 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 683 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/rfc_string.c</h3>
+<div class="file-description">A .c file with 2,349 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 2,349 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/rfc_string.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 1,460 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 1,460 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/scheduler.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 69 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 69 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/syscalldefs.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 6 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 6 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/syscalls.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 96 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 96 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/vfs.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 57 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 57 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/vmem.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 95 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 95 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/wglew.h</h3>
+<div class="file-description">A <strong>cpp</strong> source file with 1,364 lines of code.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">💻 Cpp</span>
+<span class="badge">📏 1,364 lines</span>
+</div>
+</div><div class="file-card">
+<h3>📄 samples/C/yajl.c</h3>
+<div class="file-description">A .c file with 165 lines.</div>
+<div style="margin-top: 1.5rem;">
+<span class="badge">📏 165 lines</span>
+</div>
+</div>
+            <div style="text-align: center; padding: 2rem; background: #f6f8fa; border-radius: 8px; margin-top: 2rem;">
+                <p style="font-size: 1.1rem; color: #586069;">
+                    ... and <strong>29</strong> more files
+                </p>
             </div>
-            
-            <div class="file-card">
-                <h3>📄 {filepath}</h3>
-                
-                <div class="file-description">
-                    {file_docs.get('description', '')}
-                </div>
-                
-                <div class="purpose-box">
-                    <strong>Purpose:</strong> {file_docs.get('purpose', '')}
-                </div>
-                
-                {f'''<div class="technical-details">
-                    <strong>Technical Details:</strong> {file_docs.get('technical_details', '')}
-                </div>''' if file_docs.get('technical_details') else ''}
-                
-                {f'''<div class="key-features">
-                    <h4>🔑 Key Features</h4>
-                    <ul>
-                        {"".join(f"<li>{feature}</li>" for feature in file_docs.get('key_features', []))}
-                    </ul>
-                </div>''' if file_docs.get('key_features') else ''}
-                
-                <div style="margin-top: 1.5rem;">
-                    <span class="badge">🔧 {len(functions)} Function{'' if len(functions) == 1 else 's'}</span>
-                    <span class="badge">📦 {len(classes)} Class{'es' if len(classes) != 1 else ''}</span>
-                </div>
-                
-                {f'''<div class="class-list">
-                    <h4>Classes</h4>
-                    {"".join(f'<div class="class-item"><span class="code-icon">📦</span>{c.get("name")} <span class="line-number">(line {c.get("line", "?")})</span></div>' for c in classes[:15])}
-                </div>''' if classes else ''}
-                
-                {f'''<div class="function-list">
-                    <h4>Functions</h4>
-                    {"".join(f'<div class="function-item"><span class="code-icon">⚡</span>{f.get("name")}() <span class="line-number">(line {f.get("line", "?")})</span></div>' for f in functions[:20])}
-                </div>''' if functions else ''}
-            </div>
-            
-            <div class="file-card">
-                <h3>📄 {filepath}</h3>
-                
-                <div class="file-description">
-                    {file_docs.get('description', '')}
-                </div>
-                
-                <div class="purpose-box">
-                    <strong>Purpose:</strong> {file_docs.get('purpose', '')}
-                </div>
-                
-                {f'''<div class="technical-details">
-                    <strong>Technical Details:</strong> {file_docs.get('technical_details', '')}
-                </div>''' if file_docs.get('technical_details') else ''}
-                
-                {f'''<div class="key-features">
-                    <h4>🔑 Key Features</h4>
-                    <ul>
-                        {"".join(f"<li>{feature}</li>" for feature in file_docs.get('key_features', []))}
-                    </ul>
-                </div>''' if file_docs.get('key_features') else ''}
-                
-                <div style="margin-top: 1.5rem;">
-                    <span class="badge">🔧 {len(functions)} Function{'' if len(functions) == 1 else 's'}</span>
-                    <span class="badge">📦 {len(classes)} Class{'es' if len(classes) != 1 else ''}</span>
-                </div>
-                
-                {f'''<div class="class-list">
-                    <h4>Classes</h4>
-                    {"".join(f'<div class="class-item"><span class="code-icon">📦</span>{c.get("name")} <span class="line-number">(line {c.get("line", "?")})</span></div>' for c in classes[:15])}
-                </div>''' if classes else ''}
-                
-                {f'''<div class="function-list">
-                    <h4>Functions</h4>
-                    {"".join(f'<div class="function-item"><span class="code-icon">⚡</span>{f.get("name")}() <span class="line-number">(line {f.get("line", "?")})</span></div>' for f in functions[:20])}
-                </div>''' if functions else ''}
-            </div>
-            
-            <div class="file-card">
-                <h3>📄 {filepath}</h3>
-                
-                <div class="file-description">
-                    {file_docs.get('description', '')}
-                </div>
-                
-                <div class="purpose-box">
-                    <strong>Purpose:</strong> {file_docs.get('purpose', '')}
-                </div>
-                
-                {f'''<div class="technical-details">
-                    <strong>Technical Details:</strong> {file_docs.get('technical_details', '')}
-                </div>''' if file_docs.get('technical_details') else ''}
-                
-                {f'''<div class="key-features">
-                    <h4>🔑 Key Features</h4>
-                    <ul>
-                        {"".join(f"<li>{feature}</li>" for feature in file_docs.get('key_features', []))}
-                    </ul>
-                </div>''' if file_docs.get('key_features') else ''}
-                
-                <div style="margin-top: 1.5rem;">
-                    <span class="badge">🔧 {len(functions)} Function{'' if len(functions) == 1 else 's'}</span>
-                    <span class="badge">📦 {len(classes)} Class{'es' if len(classes) != 1 else ''}</span>
-                </div>
-                
-                {f'''<div class="class-list">
-                    <h4>Classes</h4>
-                    {"".join(f'<div class="class-item"><span class="code-icon">📦</span>{c.get("name")} <span class="line-number">(line {c.get("line", "?")})</span></div>' for c in classes[:15])}
-                </div>''' if classes else ''}
-                
-                {f'''<div class="function-list">
-                    <h4>Functions</h4>
-                    {"".join(f'<div class="function-item"><span class="code-icon">⚡</span>{f.get("name")}() <span class="line-number">(line {f.get("line", "?")})</span></div>' for f in functions[:20])}
-                </div>''' if functions else ''}
-            </div>
-            
-            <div class="file-card">
-                <h3>📄 {filepath}</h3>
-                
-                <div class="file-description">
-                    {file_docs.get('description', '')}
-                </div>
-                
-                <div class="purpose-box">
-                    <strong>Purpose:</strong> {file_docs.get('purpose', '')}
-                </div>
-                
-                {f'''<div class="technical-details">
-                    <strong>Technical Details:</strong> {file_docs.get('technical_details', '')}
-                </div>''' if file_docs.get('technical_details') else ''}
-                
-                {f'''<div class="key-features">
-                    <h4>🔑 Key Features</h4>
-                    <ul>
-                        {"".join(f"<li>{feature}</li>" for feature in file_docs.get('key_features', []))}
-                    </ul>
-                </div>''' if file_docs.get('key_features') else ''}
-                
-                <div style="margin-top: 1.5rem;">
-                    <span class="badge">🔧 {len(functions)} Function{'' if len(functions) == 1 else 's'}</span>
-                    <span class="badge">📦 {len(classes)} Class{'es' if len(classes) != 1 else ''}</span>
-                </div>
-                
-                {f'''<div class="class-list">
-                    <h4>Classes</h4>
-                    {"".join(f'<div class="class-item"><span class="code-icon">📦</span>{c.get("name")} <span class="line-number">(line {c.get("line", "?")})</span></div>' for c in classes[:15])}
-                </div>''' if classes else ''}
-                
-                {f'''<div class="function-list">
-                    <h4>Functions</h4>
-                    {"".join(f'<div class="function-item"><span class="code-icon">⚡</span>{f.get("name")}() <span class="line-number">(line {f.get("line", "?")})</span></div>' for f in functions[:20])}
-                </div>''' if functions else ''}
-            </div>
-            </div></div>
+
+        </div>
+    </div>
     
     <div class="footer">
         <p><strong>📚 Generated by CodeBase Genius</strong></p>
-        <p style="opacity: 0.85; margin-top: 0.75rem;">Powered by AI • Generated on November 14, 2025 at 06:23:40</p>
+        <p style="opacity: 0.85; margin-top: 0.75rem;">Powered by AI • Generated on November 14, 2025 at 07:36:28</p>
     </div>
     
     <script>

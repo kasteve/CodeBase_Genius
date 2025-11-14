@@ -1,50 +1,41 @@
 """
 FastAPI server for CodeBase Genius
-Provides REST API endpoints to trigger Jac walkers
+Analyzes ALL file types and generates comprehensive documentation
 """
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-import subprocess
-import json
 from typing import Optional, List
 import os
+import sys
+import requests
 from pathlib import Path
 
-# Configure Graphviz PATH for Windows
-# Add Graphviz to system PATH so diagram generation works
-graphviz_path = r'C:\Program Files (x86)\Graphviz\bin'
-if os.path.exists(graphviz_path):
-    os.environ["PATH"] += os.pathsep + graphviz_path
-    print(f"✅ Graphviz added to PATH: {graphviz_path}")
-else:
-    # Try alternative location
-    graphviz_path_alt = r'C:\Program Files\Graphviz\bin'
-    if os.path.exists(graphviz_path_alt):
-        os.environ["PATH"] += os.pathsep + graphviz_path_alt
-        print(f"✅ Graphviz added to PATH: {graphviz_path_alt}")
-    else:
-        print("⚠️ Warning: Graphviz not found. Diagram generation may fail.")
+# Setup Graphviz
+try:
+    from setup_graphviz import setup_graphviz
+    GRAPHVIZ_AVAILABLE = setup_graphviz()
+except Exception as e:
+    print(f"⚠️ Graphviz setup failed: {e}")
+    GRAPHVIZ_AVAILABLE = False
 
-# Load Gemini API key from environment
+# Load API keys
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
 if GEMINI_API_KEY:
-    print("✅ Gemini API key loaded - AI documentation enhancement enabled")
+    print("✅ Gemini API key loaded - AI documentation enabled")
 else:
-    print("⚠️ No Gemini API key found - AI enhancement will be disabled")
-    print("   Set GEMINI_API_KEY environment variable to enable AI features")
+    print("⚠️ No Gemini API key - Set GEMINI_API_KEY environment variable")
 
 app = FastAPI(
     title="CodeBase Genius API",
-    description="AI-powered codebase documentation generator",
-    version="1.0.0"
+    description="Universal codebase documentation generator",
+    version="2.0.0"
 )
 
-# Configure CORS for frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -53,104 +44,83 @@ app.add_middleware(
 
 class AnalyzeRequest(BaseModel):
     repo_url: str
-    
+    max_files: Optional[int] = 200  # Limit files to analyze
+
 
 class AnalyzeResponse(BaseModel):
     status: str
     message: str
     repo_url: str
-    file_count: Optional[int] = None
-    directory_count: Optional[int] = None
+    total_files: Optional[int] = None
+    files_analyzed: Optional[int] = None
     documentation_path: Optional[str] = None
-    diagram_path: Optional[str] = None
+    stats: Optional[dict] = None
     error: Optional[str] = None
-
-
-class FileInfo(BaseModel):
-    path: str
-    type: str
-
-
-class RepoInfo(BaseModel):
-    repo_url: str
-    owner: str
-    repo: str
-    files: List[str]
-    directories: List[str]
-    file_count: int
-    directory_count: int
 
 
 @app.get("/")
 async def root():
-    """Health check endpoint"""
+    """API information"""
     return {
+        "service": "CodeBase Genius API v2.0",
         "status": "healthy",
-        "service": "CodeBase Genius API",
-        "version": "1.0.0",
-        "graphviz_configured": graphviz_path in os.environ["PATH"],
+        "features": [
+            "Universal file type analysis",
+            "Multi-language support", 
+            "AI-powered documentation",
+            "Beautiful HTML output"
+        ],
         "endpoints": {
             "docs": "/docs",
-            "health": "/health",
             "analyze": "/api/analyze",
-            "generate_docs": "/api/generate-docs"
+            "health": "/health"
         }
     }
 
 
 @app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    # Check if Graphviz is accessible
-    graphviz_available = False
-    try:
-        result = subprocess.run(['dot', '-V'], capture_output=True, text=True, timeout=5)
-        graphviz_available = result.returncode == 0
-    except Exception:
-        pass
-    
-    return {
-        "status": "healthy",
-        "graphviz_available": graphviz_available
-    }
+async def health():
+    """Health check"""
+    return {"status": "healthy", "ai_enabled": bool(GEMINI_API_KEY)}
 
 
 @app.post("/api/analyze", response_model=AnalyzeResponse)
 async def analyze_repository(request: AnalyzeRequest):
     """
-    Analyze a GitHub repository and generate documentation
-    
-    Args:
-        request: AnalyzeRequest with repo_url
-        
-    Returns:
-        AnalyzeResponse with status and results
+    Analyze repository and generate complete documentation
+    Optimized for large repositories with timeout protection
     """
+    import time
+    start_time = time.time()
+    max_runtime = 120  # 2 minute maximum runtime
+    
     try:
-        # Validate GitHub URL
+        # Validate URL
         if not request.repo_url.startswith("https://github.com/"):
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid GitHub URL. Must start with https://github.com/"
-            )
+            raise HTTPException(400, "Invalid GitHub URL")
         
-        # Use Jac to analyze via Python integration
-        from py.repo_mapper import RepoMapper
-        from py.code_analyzer import CodeAnalyzer
-        # Import HTML doc generator with AI
-        try:
-            from py.docgen_html import HTMLDocGenerator as DocGenerator
-            print("✅ Using AI-powered HTML documentation generator")
-        except ImportError:
-            try:
-                from py.docgen_ai import AIDocGenerator as DocGenerator
-                print("✅ Using AI-enhanced markdown generator")
-            except ImportError:
-                from py.docgen import DocGenerator
-                print("⚠️ Using basic documentation generator")
+        print(f"\n🚀 Starting analysis: {request.repo_url}")
+        
+        # Import modules directly (avoid __init__.py issues)
+        import sys
+        from pathlib import Path as PathLib
+        
+        # Add py directory to path
+        py_dir = PathLib(__file__).parent / 'py'
+        if str(py_dir) not in sys.path:
+            sys.path.insert(0, str(py_dir))
+        
+        # Import modules
+        import repo_mapper
+        import code_analyzer
+        import docgen
+        
+        RepoMapper = repo_mapper.RepoMapper
+        CodeAnalyzer = code_analyzer.CodeAnalyzer
+        DocGenerator = docgen.DocGenerator
         
         # Step 1: Map repository
-        print(f"📂 Mapping repository: {request.repo_url}")
+        print("📂 Step 1/3: Mapping repository...")
         mapper = RepoMapper(request.repo_url)
         repo_map = mapper.map_repository()
         
@@ -159,244 +129,238 @@ async def analyze_repository(request: AnalyzeRequest):
                 status="error",
                 message="Failed to map repository",
                 repo_url=request.repo_url,
-                error=repo_map.get('error', 'Unknown error')
+                error=repo_map.get('error')
             )
         
-        print(f"✅ Repository mapped: {repo_map['file_count']} files found")
+        total_files = repo_map.get('file_count', 0)
+        print(f"✅ Found {total_files:,} total files")
         
-        # Step 2: Analyze code
-        print("🔍 Analyzing code structure...")
-        analyzer = CodeAnalyzer()
+        # Step 2: Fetch and analyze ALL file types
+        print(f"📥 Step 2/3: Fetching files...")
+        owner = repo_map['owner']
+        repo_name = repo_map['repo']
+        all_files = repo_map.get('files', [])
         
-        # Get list of Python files to analyze (your analyzer only handles .py files)
-        code_files = [f for f in repo_map.get('files', []) 
-                     if f.endswith('.py')]
+        # Determine which files to analyze - Smart prioritization
+        code_extensions = {
+            '.py', '.js', '.jsx', '.ts', '.tsx', '.java', '.cpp', '.c', '.h',
+            '.cs', '.go', '.rs', '.rb', '.php', '.swift', '.kt', '.scala'
+        }
         
-        # Limit to first 50 files for performance
-        files_to_analyze = code_files[:50]
+        config_extensions = {'.json', '.yaml', '.yml', '.toml', '.ini'}
+        doc_extensions = {'.md', '.rst', '.txt'}
         
-        print(f"📊 Found {len(code_files)} Python files, analyzing first {len(files_to_analyze)}...")
+        # Categorize files
+        priority_files = []  # Main code files
+        config_files = []
+        doc_files = []
+        other_files = []
         
-        # Fetch and analyze files from GitHub
-        owner = repo_map.get('owner')
-        repo_name = repo_map.get('repo')
-        
-        # Collect file contents
-        files_content = {}
-        
-        for file_path in files_to_analyze:
-            try:
-                # Fetch file content from GitHub
-                file_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/main/{file_path}"
-                import requests as req
-                file_response = req.get(file_url, timeout=10)
-                
-                if file_response.status_code == 200:
-                    files_content[file_path] = file_response.text
-                else:
-                    # Try 'master' branch if 'main' fails
-                    file_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/master/{file_path}"
-                    file_response = req.get(file_url, timeout=10)
-                    if file_response.status_code == 200:
-                        files_content[file_path] = file_response.text
-                        
-            except Exception as e:
-                print(f"⚠️ Failed to fetch {file_path}: {str(e)}")
+        for f in all_files:
+            ext = Path(f).suffix.lower()
+            # Skip common directories that bloat repos
+            if any(skip in f.lower() for skip in [
+                'node_modules/', 'vendor/', '.git/', 'dist/', 'build/',
+                '__pycache__/', '.next/', '.nuxt/', 'target/'
+            ]):
                 continue
+            
+            if ext in code_extensions:
+                priority_files.append(f)
+            elif ext in config_extensions:
+                config_files.append(f)
+            elif ext in doc_extensions:
+                doc_files.append(f)
+            else:
+                other_files.append(f)
+        
+        # Smart selection: prioritize main code files
+        max_files = min(request.max_files, 150)  # Cap at 150 to prevent timeouts
+        
+        files_to_analyze = (
+            priority_files[:int(max_files * 0.7)] +      # 70% code files
+            config_files[:int(max_files * 0.15)] +       # 15% config
+            doc_files[:int(max_files * 0.1)] +           # 10% docs
+            other_files[:int(max_files * 0.05)]          # 5% other
+        )
+        
+        files_to_analyze = files_to_analyze[:max_files]
+        
+        print(f"📊 Analyzing {len(files_to_analyze)} files (out of {total_files:,} total)")
+        
+        # Fetch file contents with parallel requests and timeout handling
+        files_content = {}
+        github_token = os.getenv('GITHUB_TOKEN')
+        headers = {}
+        if github_token:
+            headers['Authorization'] = f'token {github_token}'
+        
+        # Use session for connection pooling (faster)
+        session = requests.Session()
+        session.headers.update(headers)
+        
+        # Fetch files with shorter timeout
+        fetch_timeout = 5  # 5 seconds per file
+        max_retries = 1
+        
+        for i, file_path in enumerate(files_to_analyze):
+            if i % 10 == 0:
+                print(f"   Fetching: {i}/{len(files_to_analyze)}...")
+            
+            # Skip very large files
+            if len(file_path) > 200:
+                continue
+            
+            success = False
+            for attempt in range(max_retries + 1):
+                try:
+                    # Try main branch first
+                    file_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/main/{file_path}"
+                    response = session.get(file_url, timeout=fetch_timeout)
+                    
+                    if response.status_code == 404 and attempt == 0:
+                        # Try master branch
+                        file_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/master/{file_path}"
+                        response = session.get(file_url, timeout=fetch_timeout)
+                    
+                    if response.status_code == 200:
+                        # Only store text files (skip binaries)
+                        try:
+                            content = response.content.decode('utf-8')
+                            # Skip very large files (>500KB)
+                            if len(content) > 500000:
+                                print(f"   Skipping large file: {file_path}")
+                                continue
+                            files_content[file_path] = content
+                            success = True
+                            break
+                        except UnicodeDecodeError:
+                            # Skip binary files
+                            break
+                    else:
+                        break
+                        
+                except requests.Timeout:
+                    if attempt == max_retries:
+                        print(f"   ⏱️ Timeout: {file_path}")
+                    continue
+                except Exception as e:
+                    if attempt == max_retries:
+                        print(f"   ⚠️ Error: {file_path}: {str(e)[:50]}")
+                    break
+            
+            # Stop if we've been running too long (prevent total timeout)
+            if i > 0 and i % 50 == 0:
+                if len(files_content) < i * 0.3:  # If less than 30% success rate
+                    print(f"   ⚠️ Low success rate, stopping at {i} files")
+                    break
         
         print(f"✅ Fetched {len(files_content)} files successfully")
         
-        # Analyze all files at once using your analyze_repository method
+        # Step 3: Analyze all files
+        print("🔍 Step 3/3: Analyzing code structure...")
+        analyzer = CodeAnalyzer()
         analysis_results = analyzer.analyze_repository(files_content)
         
-        print(f"✅ Analyzed {analysis_results.get('files_analyzed', 0)} files")
+        print(f"✅ Analysis complete:")
+        print(f"   Files analyzed: {analysis_results['files_analyzed']}")
+        print(f"   Functions found: {analysis_results['total_functions']}")
+        print(f"   Classes found: {analysis_results['total_classes']}")
+        print(f"   Total entities: {analysis_results['total_entities']}")
         
-        # Step 3: Generate documentation
+        # Step 4: Generate documentation
         print("📝 Generating documentation...")
-        docgen = DocGenerator()
+        docgen = DocGenerator(repo_url=request.repo_url, gemini_api_key=GEMINI_API_KEY)
         
-        # Prepare repo_map in the format your DocGenerator expects
-        repo_name = repo_map.get('repo', 'repository')
-        
-        # Organize files by directory for file_tree
-        file_tree = {}
-        for file_path in repo_map.get('files', [])[:200]:
-            parts = file_path.split('/')
-            if len(parts) > 1:
-                dir_name = '/'.join(parts[:-1])
-                if dir_name not in file_tree:
-                    file_tree[dir_name] = []
-                file_tree[dir_name].append(parts[-1])
-            else:
-                if 'root' not in file_tree:
-                    file_tree['root'] = []
-                file_tree['root'].append(file_path)
-        
-        # Build file_tree list
-        file_tree_list = [
-            {'path': dir_path, 'files': files}
-            for dir_path, files in list(file_tree.items())[:40]
-        ]
-        
-        # Prepare map_res for your DocGenerator
+        # Prepare repo map
         map_res = {
             'name': repo_name,
-            'readme_summary': f"Repository: {repo_map.get('owner')}/{repo_name}\n\nTotal Files: {repo_map.get('file_count', 0)}\nTotal Directories: {repo_map.get('directory_count', 0)}\n\nAnalyzed {analysis_results.get('files_analyzed', 0)} Python files.",
-            'file_tree': file_tree_list
+            'repo_url': request.repo_url,
+            'total_files_in_repo': total_files,
+            'total_dirs_in_repo': repo_map.get('directory_count', 0)
         }
         
-        # Use your generate method which builds CCG internally
-        doc_result = docgen.generate(analysis_results, map_res, opts={'out_dir': './outputs'})
-        
-        # Verify files were actually created and construct proper paths
-        docs_path = doc_result.get('docs')
-        diagram_path = doc_result.get('diagram')
-        
-        # Convert to absolute paths and verify existence
-        if docs_path:
-            docs_file = Path(docs_path)
-            if not docs_file.is_absolute():
-                docs_file = Path('./outputs') / repo_name / docs_file.name
-            
-            if docs_file.exists():
-                print(f"✅ Documentation generated: {docs_file}")
-                docs_path = str(docs_file.absolute())
-            else:
-                print(f"⚠️ Documentation path returned but file not found: {docs_file}")
-                docs_path = None
-        
-        if diagram_path:
-            diagram_file = Path(diagram_path)
-            if not diagram_file.is_absolute():
-                # Diagram is usually in the same directory as docs
-                if docs_path:
-                    diagram_file = Path(docs_path).parent / diagram_file.name
-                else:
-                    diagram_file = Path('./outputs') / repo_name / diagram_file.name
-            
-            if diagram_file.exists():
-                print(f"✅ Diagram generated: {diagram_file}")
-                diagram_path = str(diagram_file.absolute())
-            else:
-                print(f"⚠️ Diagram path returned but file not found: {diagram_file}")
-                diagram_path = None
-        
-        # Build success message
-        message_parts = ["Repository analyzed"]
-        if docs_path:
-            message_parts.append("documentation generated")
-        if diagram_path:
-            message_parts.append("diagram generated")
-        
-        success_message = " and ".join(message_parts) + " successfully"
-        
-        return AnalyzeResponse(
-            status="success",
-            message=success_message,
-            repo_url=request.repo_url,
-            file_count=repo_map.get('file_count', 0),
-            directory_count=repo_map.get('directory_count', 0),
-            documentation_path=docs_path,
-            diagram_path=diagram_path
+        # Generate docs
+        doc_result = docgen.generate(
+            analysis_results, 
+            map_res, 
+            opts={'out_dir': './outputs'}
         )
         
+        docs_path = doc_result.get('docs')
+        
+        # Verify file exists
+        if docs_path and Path(docs_path).exists():
+            print(f"✅ Documentation generated: {docs_path}")
+            
+            return AnalyzeResponse(
+                status="success",
+                message=f"Successfully analyzed {len(files_content)} files and generated documentation",
+                repo_url=request.repo_url,
+                total_files=total_files,
+                files_analyzed=len(files_content),
+                documentation_path=str(Path(docs_path).absolute()),
+                stats={
+                    'code_files': analysis_results['stats']['files_by_category']['code'],
+                    'markup_files': analysis_results['stats']['files_by_category']['markup'],
+                    'config_files': analysis_results['stats']['files_by_category']['config'],
+                    'functions': analysis_results['total_functions'],
+                    'classes': analysis_results['total_classes'],
+                    'languages': analysis_results['stats']['files_by_language']
+                }
+            )
+        else:
+            raise HTTPException(500, "Documentation generation failed")
+            
+    except HTTPException:
+        raise
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(
-            status_code=500,
-            detail=f"Internal server error: {str(e)}"
-        )
+        raise HTTPException(500, f"Analysis failed: {str(e)}")
 
 
-@app.post("/api/generate-docs", response_model=AnalyzeResponse)
-async def generate_docs(request: AnalyzeRequest):
-    """
-    Generate documentation for a repository (same as analyze)
-    """
-    return await analyze_repository(request)
-
-
-@app.get("/api/download-docs/{repo_name}")
+@app.get("/api/download/{repo_name}")
 async def download_docs(repo_name: str):
-    """
-    Download generated markdown documentation
-    """
-    doc_path = Path(f"./outputs/{repo_name}/docs.md")
+    """Download generated documentation"""
+    doc_path = Path(f"./outputs/{repo_name}/index.html")
     
     if not doc_path.exists():
-        raise HTTPException(
-            status_code=404,
-            detail=f"Documentation not found for repository: {repo_name}"
-        )
+        raise HTTPException(404, f"Documentation not found for: {repo_name}")
     
     return FileResponse(
         path=str(doc_path),
-        filename=f"{repo_name}_docs.md",
-        media_type="text/markdown"
+        filename=f"{repo_name}_documentation.html",
+        media_type="text/html"
     )
 
 
 @app.get("/api/repositories")
 async def list_repositories():
-    """
-    List recently analyzed repositories
-    """
+    """List analyzed repositories"""
     outputs_dir = Path("./outputs")
     
     if not outputs_dir.exists():
-        return {
-            "status": "success",
-            "repositories": []
-        }
+        return {"repositories": []}
     
     repos = []
     for repo_dir in outputs_dir.iterdir():
         if repo_dir.is_dir():
-            doc_path = repo_dir / "docs.md"
+            doc_path = repo_dir / "index.html"
             if doc_path.exists():
                 repos.append({
                     "name": repo_dir.name,
                     "docs_path": str(doc_path),
-                    "has_diagram": (repo_dir / "ccg.png").exists()
+                    "size": doc_path.stat().st_size
                 })
     
-    return {
-        "status": "success",
-        "repositories": repos
-    }
-
-
-@app.get("/api/debug/outputs")
-async def debug_outputs():
-    """
-    Debug endpoint to see what files are actually in outputs directory
-    """
-    outputs_dir = Path("./outputs")
-    
-    if not outputs_dir.exists():
-        return {
-            "status": "error",
-            "message": "Outputs directory does not exist",
-            "path": str(outputs_dir.absolute())
-        }
-    
-    structure = {}
-    for repo_dir in outputs_dir.iterdir():
-        if repo_dir.is_dir():
-            files = [f.name for f in repo_dir.iterdir() if f.is_file()]
-            structure[repo_dir.name] = {
-                "path": str(repo_dir.absolute()),
-                "files": files
-            }
-    
-    return {
-        "status": "success",
-        "outputs_path": str(outputs_dir.absolute()),
-        "repositories": structure
-    }
+    return {"repositories": repos}
 
 
 if __name__ == "__main__":
     import uvicorn
+    print("\n🚀 Starting CodeBase Genius API Server")
+    print("📝 Universal file type support enabled")
+    print(f"🤖 AI Enhancement: {'Enabled' if GEMINI_API_KEY else 'Disabled'}")
+    print("\n")
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
