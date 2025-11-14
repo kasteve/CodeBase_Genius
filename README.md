@@ -1,442 +1,465 @@
-# Codebase Genius — Implementation Scaffold
+# 🧠 CodeBase Genius
 
-This document contains a complete scaffold to implement **Codebase Genius**: an agentic, multi‑agent Jac application that clones a public GitHub repo, analyses it (file tree, README summary, Code Context Graph using Tree‑sitter), and generates a Markdown documentation bundle with diagrams.
+**AI-powered multi-agent system for automatic codebase documentation generation**
 
-The scaffold includes:
-
-* Project layout
-* `main.jac` with Jac walkers / agents (Supervisor, RepoMapper, CodeAnalyzer, DocGenie)
-* Python helper modules (repo_mapper.py, code_analyzer.py, docgen.py)
-* `requirements.txt` and setup/run instructions
-* Example curl commands and sample output structure
+CodeBase Genius is an intelligent documentation generator that analyzes GitHub repositories and produces comprehensive, beautiful HTML documentation with AI-enhanced insights.
 
 ---
 
-## 1. Project layout
+## ✨ Features
+
+- 🌍 **Universal Language Support** - Python, JavaScript, TypeScript, Java, C++, Go, Rust, Ruby, PHP, Swift, Kotlin, and more
+- 🤖 **AI-Powered Insights** - Uses Google Gemini 2.0 for intelligent overview generation
+- 🎨 **Beautiful HTML Output** - Modern, responsive documentation websites
+- 📊 **Comprehensive Analysis** - Functions, classes, file structure, and code relationships
+- 🚀 **Fast & Efficient** - Smart file prioritization and parallel processing
+- 🔌 **REST API** - Easy integration with FastAPI backend
+- 🎯 **Multi-Agent Architecture** - Supervisor, RepoMapper, CodeAnalyzer, and DocGenie agents
+
+---
+
+## 📁 Project Structure
 
 ```
 codebase_genius/
-├── BE/
-│   ├── main.jac
-│   ├── agents/
-│   │   ├── supervisor.jac
-│   │   ├── repo_mapper.jac
-│   │   ├── code_analyzer.jac
-│   │   └── docgenie.jac
-│   └── py/  # Python helpers callable from Jac via py_module
-│       ├── repo_mapper.py
-│       ├── code_analyzer.py
-│       └── docgen.py
-├── FE/ (optional)
-│   └── streamlit_frontend.py
+├── BE/                          # Backend
+│   ├── main.jac                # Jaclang entry point
+│   ├── api.py                  # FastAPI server
+│   ├── agents/                 # Jac agents
+│   │   ├── __init__.py
+│   │   ├── supervisor.jac      # Orchestrates pipeline
+│   │   ├── repo_mapper.jac     # Maps repository structure
+│   │   ├── code_analyzer.jac   # Analyzes code patterns
+│   │   └── docgenie.jac        # Generates documentation
+│   └── py/                     # Python implementations
+│       ├── __init__.py
+│       ├── repo_mapper.py      # GitHub API integration
+│       ├── code_analyzer.py    # Universal code analyzer
+│       └── docgen.py           # HTML documentation generator
+├── FE/                         # Frontend (optional)
+│   └── streamlit_frontend.py   # Streamlit web interface
+├── outputs/                    # Generated documentation
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## 2. `requirements.txt`
+## 🚀 Quick Start
 
-```
-# Jac runtime (install separately as per Jac docs)
-jaseci
-byllm
-flask
-fastapi
-uvicorn
-pydantic
-requests
-GitPython
-markdown
-pyyaml
-tree_sitter
-networkx
-matplotlib
-graphviz
-python-dotenv
+### Prerequisites
+
+- Python 3.8 or higher
+- Git
+- Graphviz (optional, for diagrams)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/codebase-genius.git
+   cd codebase-genius
+   ```
+
+2. **Create virtual environment**
+   ```bash
+   python -m venv venv
+   
+   # Windows
+   venv\Scripts\activate
+   
+   # Linux/Mac
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Create required files**
+   ```bash
+   cd BE
+   
+   # Create __init__.py files
+   touch py/__init__.py
+   touch agents/__init__.py
+   
+   # Create docgen.py (run the helper script)
+   python create_docgen.py
+   ```
+
+5. **Set environment variables (optional)**
+   ```bash
+   # For AI-enhanced documentation
+   export GEMINI_API_KEY=your_gemini_api_key
+   
+   # For higher GitHub API limits
+   export GITHUB_TOKEN=your_github_token
+   ```
+
+### Running the Server
+
+```bash
+cd BE
+
+# Option 1: Using the smart startup script (recommended)
+python start.py
+
+# Option 2: Direct API server
+python api.py
+
+# Option 3: Using Jaclang
+jac run main.jac
 ```
 
-> Note: `tree_sitter` Python bindings and language grammars require extra steps (see below). `graphviz` may require system install (`apt install graphviz` on Debian/Ubuntu).
+The API server will start at `http://localhost:8000`
+
+- **API Documentation**: http://localhost:8000/docs
+- **Health Check**: http://localhost:8000/health
 
 ---
 
-## 3. Jac backend (BE/main.jac)
+## 📚 Usage
 
-This file wires walkers that call Python helpers via `py_module`. The Jac code focuses on orchestration, delegating heavy parsing to Python modules.
+### API Endpoint
 
-```jac
-# main.jac
-import py_module as py
+**Analyze a repository:**
 
-walker start:
-    # entry: expect an event with {"repo_url": "https://github.com/owner/repo"}
-    can run supervisor.start_supervisor(event)
-
-# Provide simple HTTP handlers (the jac runtime exposes walkers as endpoints)
-
-walker api_generate_docs:
-    can run supervisor.generate_from_url(event)
+```bash
+curl -X POST http://localhost:8000/api/analyze \
+  -H "Content-Type: application/json" \
+  -d '{
+    "repo_url": "https://github.com/owner/repository",
+    "max_files": 100
+  }'
 ```
 
----
-
-## 4. Example Jac agent: `agents/supervisor.jac`
-
-```jac
-# supervisor.jac
-import py_module as py
-
-walker start_supervisor:
-    # event.payload should contain repo_url and optional opts
-    with event.payload as p:
-        repo_url = p.get('repo_url', '')
-    if not repo_url:
-        emit({ 'error': 'Missing repo_url' })
-        return
-
-    emit({'status':'cloning', 'repo': repo_url})
-    # call python to clone and produce file tree and readme summary
-    map_res = py.call('py.repo_mapper.clone_and_map', [repo_url])
-    if map_res.get('error'):
-        emit(map_res)
-        return
-
-    # plan high level (choose top files)
-    plan = py.call('py.repo_mapper.prioritize_files', [map_res])
-
-    emit({'status':'analyzing', 'plan': plan.get('top_files')})
-
-    ccg = {}
-    for f in plan.get('top_files', []):
-        r = py.call('py.code_analyzer.analyze_file', [map_res['local_path'], f])
-        ccg[f] = r
-
-    # merge ccg
-    merged = py.call('py.code_analyzer.merge_ccg', [ccg])
-
-    # generate docs
-    out = py.call('py.docgen.generate_markdown', [map_res, merged, { 'out_dir': './outputs' }])
-
-    emit({ 'status':'done', 'output': out })
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Successfully analyzed 95 files",
+  "repo_url": "https://github.com/owner/repository",
+  "total_files": 1250,
+  "files_analyzed": 95,
+  "documentation_path": "/path/to/outputs/repository/index.html",
+  "stats": {
+    "code_files": 80,
+    "markup_files": 10,
+    "config_files": 5,
+    "functions": 450,
+    "classes": 85,
+    "languages": {
+      "python": 45,
+      "javascript": 25,
+      "typescript": 10
+    }
+  }
+}
 ```
 
----
-
-## 5. Python helpers: `py/repo_mapper.py`
+### Python Client
 
 ```python
-# repo_mapper.py
-import os
-import tempfile
-import git
-import json
-from pathlib import Path
-
-IGNORED = {'.git', 'node_modules', '__pycache__'}
-
-def clone_and_map(repo_url: str):
-    try:
-        tmp = tempfile.mkdtemp(prefix='codegen_')
-        repo = git.Repo.clone_from(repo_url, tmp)
-        # simple repo name
-        name = Path(repo.working_tree_dir).name
-        tree = build_tree(repo.working_tree_dir)
-        readme = find_readme_and_summarize(repo.working_tree_dir)
-        return { 'local_path': repo.working_tree_dir, 'name': name, 'file_tree': tree, 'readme_summary': readme }
-    except Exception as e:
-        return { 'error': str(e) }
-
-
-def build_tree(base_dir: str):
-    out = []
-    for root, dirs, files in os.walk(base_dir):
-        # filter dirs
-        dirs[:] = [d for d in dirs if d not in IGNORED]
-        relroot = os.path.relpath(root, base_dir)
-        items = { 'path': relroot, 'files': files.copy() }
-        out.append(items)
-    return out
-
-
-def find_readme_and_summarize(base_dir: str):
-    candidates = ['README.md', 'readme.md', 'README.MD']
-    for c in candidates:
-        p = Path(base_dir) / c
-        if p.exists():
-            text = p.read_text(encoding='utf-8')
-            return summarize_text(text)
-    return ''
-
-
-def summarize_text(text: str, max_sentences=5):
-    # simple heuristic: return first few lines; in prod call an LLM
-    lines = [l.strip() for l in text.splitlines() if l.strip()]
-    return '\n'.join(lines[:max_sentences])
-
-
-def prioritize_files(map_res):
-    # simplistic: look for entrypoints
-    candidates = []
-    for node in map_res['file_tree']:
-        for f in node['files']:
-            if f in ('main.py', 'app.py', 'index.py'):
-                path = os.path.join(node['path'], f)
-                candidates.append(path)
-    # fallback: top-level python files
-    if not candidates:
-        for node in map_res['file_tree']:
-            for f in node['files']:
-                if f.endswith('.py') and node['path'] in ('.', './'):
-                    candidates.append(os.path.join(node['path'], f))
-    return { 'top_files': candidates[:5] }
-```
-
----
-
-## 6. Python: `py/code_analyzer.py` (Tree‑sitter usage)
-
-> **Important:** Tree‑sitter requires installing language grammars and the Python bindings. See the README section below.
-
-```python
-# code_analyzer.py
-import os
-from pathlib import Path
-from tree_sitter import Language, Parser
-import networkx as nx
-
-# assume grammars have been built into a shared lib at ./build/my-languages.so
-LANG_SO = os.environ.get('TREE_SITTER_LANG_SO', './build/my-languages.so')
-
-parser = Parser()
-try:
-    PY_LANG = Language(LANG_SO, 'python')
-    parser.set_language(PY_LANG)
-except Exception as e:
-    PY_LANG = None
-
-
-def analyze_file(repo_path: str, file_rel_path: str):
-    p = Path(repo_path) / file_rel_path
-    if not p.exists():
-        return {'error': 'file not found', 'path': str(p)}
-    src = p.read_text(encoding='utf-8')
-    if not PY_LANG:
-        # fallback: simple regex parse
-        return simple_parse(src)
-    tree = parser.parse(bytes(src, 'utf8'))
-    # TODO: traverse tree to extract functions, classes, calls
-    # For now return a placeholder
-    return simple_parse(src)
-
-
-def simple_parse(src: str):
-    lines = src.splitlines()
-    funcs = []
-    classes = []
-    for i,l in enumerate(lines):
-        s = l.strip()
-        if s.startswith('def '):
-            name = s.split('def ')[1].split('(')[0]
-            funcs.append({'name': name, 'line': i+1})
-        if s.startswith('class '):
-            name = s.split('class ')[1].split('(')[0].strip(':')
-            classes.append({'name': name, 'line': i+1})
-    # build small CCG as edges between functions if one mentions another (heuristic)
-    import re
-    g = { 'nodes': [], 'edges': [] }
-    names = [f['name'] for f in funcs]
-    for f in funcs:
-        g['nodes'].append({'type':'function','name':f['name'],'line':f['line']})
-        body = '\n'.join(lines[f['line']-1:f['line']+30])
-        for other in names:
-            if other != f['name'] and re.search(r'\b' + other + r'\b', body):
-                g['edges'].append({'from': f['name'], 'to': other, 'type':'calls'})
-    return g
-
-
-def merge_ccg(ccg_map: dict):
-    # merge simple graphs
-    nodes = []
-    edges = []
-    for k,v in ccg_map.items():
-        for n in v.get('nodes',[]):
-            nodes.append({**n, 'file': k})
-        for e in v.get('edges',[]):
-            edges.append({**e, 'file': k})
-    return { 'nodes': nodes, 'edges': edges }
-```
-
----
-
-## 7. Python: `py/docgen.py`
-
-```python
-# docgen.py
-import os
-from pathlib import Path
-import markdown
-import json
-import networkx as nx
-
-
-def generate_markdown(map_res, ccg, opts=None):
-    out_dir = opts.get('out_dir','./outputs') if opts else './outputs'
-    repo_name = map_res.get('name','repo')
-    od = Path(out_dir) / repo_name
-    od.mkdir(parents=True, exist_ok=True)
-    md = []
-    md.append(f"# {repo_name} — Auto-generated documentation\n")
-    md.append('## Overview\n')
-    md.append(map_res.get('readme_summary','No README found') + '\n')
-
-    md.append('## File tree\n')
-    for node in map_res['file_tree'][:40]:
-        md.append(f"- {node['path']} ({len(node['files'])} files)")
-    md.append('\n')
-
-    md.append('## API / Code Context Graph\n')
-    md.append('Nodes:\n')
-    for n in ccg.get('nodes', [])[:200]:
-        md.append(f"- {n.get('type')} `{n.get('name')}` (file: {n.get('file', '')})")
-    md.append('\nEdges:\n')
-    for e in ccg.get('edges', [])[:500]:
-        md.append(f"- `{e['from']}` -> `{e['to']}` ({e.get('type','')}, file: {e.get('file','')})")
-
-    # write Markdown
-    md_text = '\n'.join(md)
-    md_file = od / 'docs.md'
-    md_file.write_text(md_text, encoding='utf-8')
-
-    # optionally generate a simple graphviz diagram
-    try:
-        import graphviz
-        g = graphviz.Digraph('ccg')
-        for n in ccg.get('nodes',[]):
-            g.node(n['name'])
-        for e in ccg.get('edges',[]):
-            g.edge(e['from'], e['to'])
-        g.render(str(od / 'ccg'), format='png', cleanup=True)
-        diagram = 'ccg.png'
-    except Exception:
-        diagram = None
-
-    return { 'docs': str(md_file), 'diagram': diagram }
-```
-
----
-
-## 8. Optional Streamlit frontend (FE/streamlit_frontend.py)
-
-```python
-# streamlit_frontend.py (very small)
-import streamlit as st
 import requests
 
-st.title('Codebase Genius')
-repo = st.text_input('GitHub repo URL')
-if st.button('Generate Docs'):
-    r = requests.post('http://localhost:8000/api_generate_docs', json={'repo_url': repo})
-    st.write(r.json())
+response = requests.post(
+    "http://localhost:8000/api/analyze",
+    json={
+        "repo_url": "https://github.com/psf/requests",
+        "max_files": 100
+    }
+)
+
+result = response.json()
+print(f"Documentation: {result['documentation_path']}")
+```
+
+### Command Line
+
+```bash
+# Quick test with small repository
+python test_api.py
+
+# Analyze specific repository
+curl -X POST http://localhost:8000/api/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"repo_url": "https://github.com/octocat/Hello-World", "max_files": 50}'
 ```
 
 ---
 
-## 9. README / Setup and run instructions (README.md)
+## 🎯 Supported Languages
 
-```
-# Codebase Genius — Quickstart
+### Programming Languages
+- **Python** (.py)
+- **JavaScript/Node.js** (.js, .jsx, .mjs)
+- **TypeScript** (.ts, .tsx)
+- **Java** (.java)
+- **C/C++** (.c, .cpp, .h, .hpp)
+- **C#** (.cs)
+- **Go** (.go)
+- **Rust** (.rs)
+- **Ruby** (.rb)
+- **PHP** (.php)
+- **Swift** (.swift)
+- **Kotlin** (.kt, .kts)
+- **Scala** (.scala)
 
-## Prereqs
-- Python 3.10+
-- Git
-- System packages: graphviz (for diagrams), libstdc++ (for tree-sitter builds)
-
-## 1. Clone repository (this project scaffold)
-
-    git clone <your-fork-url>
-    cd codebase_genius/BE
-
-## 2. Create venv and install deps
-
-    python3 -m venv venv
-    source venv/bin/activate
-    pip install -r ../requirements.txt
-
-## 3. Tree-sitter setup (optional but recommended for better parsing)
-
-    # clone grammars
-    git clone https://github.com/tree-sitter/tree-sitter-python third_party/tree-sitter-python
-
-    # build shared lib
-    python -c "from tree_sitter import Language; Language.build_library('./build/my-languages.so', ['third_party/tree-sitter-python'])"
-
-    # set env var
-    export TREE_SITTER_LANG_SO=./build/my-languages.so
-
-## 4. Run Jac server
-
-You need Jac/Jaseci installed and on PATH. See https://jac-lang.org for install.
-
-    jac serve main.jac
-
-This exposes walkers as HTTP endpoints (e.g., `api_generate_docs`).
-
-## 5. Call the API
-
-    curl -X POST http://localhost:8000/api_generate_docs -H 'Content-Type: application/json' -d '{"repo_url":"https://github.com/psf/requests"}'
-
-Generated docs will be under `./outputs/<repo_name>/docs.md` and `ccg.png`.
-```
+### Other Files
+- Markup files (.html, .xml, .md, .rst)
+- Stylesheets (.css, .scss, .sass)
+- Configuration (.json, .yaml, .toml, .ini)
 
 ---
 
-## 10. Example sample output (short excerpt)
+## ⚙️ Configuration
+
+### Repository Size Guidelines
+
+| Repo Size | Files | Recommended max_files | Expected Time |
+|-----------|-------|----------------------|---------------|
+| Tiny | < 50 | 50 | ~10 seconds |
+| Small | 50-200 | 100 | ~30 seconds |
+| Medium | 200-1000 | 100-150 | ~60 seconds |
+| Large | 1000-5000 | 100-150 | ~90 seconds |
+| Huge | 5000+ | 50-100 | ~60 seconds |
+
+### Environment Variables
+
+```bash
+# Optional: AI enhancement with Google Gemini
+GEMINI_API_KEY=your_api_key_here
+
+# Optional: Increase GitHub API rate limits
+GITHUB_TOKEN=ghp_your_token_here
+```
+
+**Get API Keys:**
+- Gemini API: https://makersuite.google.com/app/apikey
+- GitHub Token: https://github.com/settings/tokens
+
+---
+
+## 🛠️ Development
+
+### Running Tests
+
+```bash
+cd BE
+
+# Run diagnostic checks
+python diagnose.py
+
+# Run API tests with sample repositories
+python test_api.py
+
+# Auto-fix common issues
+python autofix.py
+```
+
+### Project Scripts
+
+- **`start.py`** - Smart startup with environment checks
+- **`diagnose.py`** - Comprehensive diagnostic tool
+- **`autofix.py`** - Automatically fixes common setup issues
+- **`test_api.py`** - Test suite with sample repositories
+- **`create_docgen.py`** - Creates the docgen.py file
+
+---
+
+## 📖 Documentation Output
+
+### Generated Files
 
 ```
-# requests — Auto-generated documentation
-
-## Overview
-A simple, elegant HTTP library for Python, built for human beings.
-
-## File tree
-- . (4 files)
-- requests (30 files)
-
-## API / Code Context Graph
-Nodes:
-- function `get` (file: requests/api.py)
-- function `request` (file: requests/api.py)
-
-Edges:
-- `get` -> `request` (calls, file: requests/api.py)
+outputs/
+└── repository-name/
+    └── index.html          # Beautiful HTML documentation
 ```
 
+### Documentation Includes
+
+1. **Project Overview** (AI-generated)
+   - Purpose and domain analysis
+   - Architecture overview
+   - Technology stack
+   - Key features
+
+2. **Repository Statistics**
+   - File counts by type
+   - Language distribution
+   - Code metrics (functions, classes)
+
+3. **File-by-File Analysis**
+   - Individual file documentation
+   - Functions and classes
+   - Line numbers and references
+
+4. **Visual Elements**
+   - Language distribution charts
+   - File category breakdowns
+   - Interactive navigation
+
 ---
 
-## 11. Limitations and next steps
+## 🔧 Troubleshooting
 
-* The included `simple_parse` is a heuristic fallback. For production-quality CCG you'll want full Tree‑sitter traversal to extract AST nodes, call expressions, inheritance, imports, and cross-file references.
-* Add caching, parallel analysis, and better LLM-based README summarisation (call `byllm` or your LLM provider).
-* Add authentication/queueing, and a nicer FE (Streamlit or React).
+### Common Issues
+
+#### "ModuleNotFoundError: No module named 'docgen'"
+
+**Solution:**
+```bash
+cd BE
+python create_docgen.py
+```
+
+#### "Request timed out"
+
+**Solution:**
+```bash
+# Use smaller max_files parameter
+curl -X POST http://localhost:8000/api/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"repo_url": "https://github.com/owner/repo", "max_files": 50}'
+
+# Set GitHub token
+export GITHUB_TOKEN=your_token
+```
+
+#### Graphviz not found
+
+**Windows:**
+```bash
+# Download from: https://graphviz.org/download/
+# OR use Chocolatey:
+choco install graphviz
+```
+
+**Linux:**
+```bash
+sudo apt install graphviz
+```
+
+**Mac:**
+```bash
+brew install graphviz
+```
+
+### Getting Help
+
+1. **Run diagnostics:**
+   ```bash
+   cd BE
+   python diagnose.py
+   ```
+
+2. **Check the documentation:**
+   - `TROUBLESHOOTING.md` - Detailed troubleshooting guide
+   - `LARGE_REPOS.md` - Handling large repositories
+   - `QUICK_FIX.txt` - Quick reference for common issues
 
 ---
 
-## 12. Useful references
+## 🏗️ Architecture
 
-* byLLM and Jac docs (examples and how to run Jac servers). See the Jaseci docs for `byLLM` examples for the Task Manager: [https://www.jac-lang.org/learn/examples/agentic_ai/task-manager-lite/](https://www.jac-lang.org/learn/examples/agentic_ai/task-manager-lite/) . citeturn0search1
-* Jac & byLLM guides: [https://www.jac-lang.org/learn/jac-byllm/usage/](https://www.jac-lang.org/learn/jac-byllm/usage/). citeturn0search5
-* Jaseci GitHub org: [https://github.com/jaseci-labs](https://github.com/jaseci-labs). citeturn0search6
+### Multi-Agent System
+
+CodeBase Genius uses a multi-agent architecture built with Jaclang:
+
+1. **Supervisor Agent** - Orchestrates the entire pipeline
+2. **RepoMapper Agent** - Maps repository structure via GitHub API
+3. **CodeAnalyzer Agent** - Analyzes code with multi-language support
+4. **DocGenie Agent** - Generates beautiful HTML documentation
+
+### Technology Stack
+
+- **Jaclang** - Agent orchestration and workflow
+- **FastAPI** - REST API server
+- **Python** - Core analysis implementation
+- **Google Gemini 2.0** - AI-powered insights
+- **GitHub API** - Repository data access
 
 ---
 
-### Final notes
+## 📊 Example Output
 
-This scaffold is a runnable starting point. I focused on clear separation of responsibilities (Supervisor, RepoMapper, CodeAnalyzer, DocGenie) and used Python modules to handle the heavy lifting so you can iterate quickly.
+### Sample Analysis
 
-If you want, I can now:
+For repository: `github/linguist` (2,037 files)
 
-* generate fully formed `main.jac` and the Jac agent files (ready to paste),
-* create the Python files verbatim for you to copy, or
-* produce a GitHub-ready commit patch with all files.
+```
+📊 Complete Repository Analysis:
+   Total files in repository: 2,037
+   Total directories: 401
+   Files analyzed: 150
+   - Code files: 120
+   - Markup files: 20
+   - Config files: 10
+   Functions found: 450
+   Classes found: 85
+```
 
-Which of those would you like me to produce next? (I'll create the files directly in this canvas.)
+**Generated Documentation:** `outputs/linguist/index.html`
+
+Open in browser to see:
+- Beautiful responsive design
+- Language distribution charts
+- Detailed file analysis
+- AI-generated overview
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Built with [Jaclang](https://www.jac-lang.org/) - The AI-first programming language
+- Powered by [Google Gemini 2.0](https://deepmind.google/technologies/gemini/)
+- Uses [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) for code parsing
+- GitHub API for repository access
+
+---
+
+## 📞 Support
+
+- **Documentation**: Check the `/docs` folder for detailed guides
+- **Issues**: Report bugs via GitHub Issues
+- **Discussions**: Join the discussions for questions and ideas
+
+---
+
+## 🗺️ Roadmap
+
+- [ ] Support for private repositories
+- [ ] Real-time collaboration features
+- [ ] Code quality metrics and recommendations
+- [ ] Integration with CI/CD pipelines
+- [ ] Multi-repository analysis
+- [ ] Export to multiple formats (PDF, DOCX)
+- [ ] Interactive code visualization
+- [ ] Custom documentation templates
+
+---
+
+**Made with ❤️ using Jaclang and AI**
+
+*Transform your codebase into beautiful, comprehensive documentation in minutes!*
